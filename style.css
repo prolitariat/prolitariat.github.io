@@ -14,13 +14,14 @@
     /* Colors - Pastel blurple palette */
     --color-primary: #a5b4fc;
     --color-primary-dark: #818cf8;
+    --color-primary-darker: #6366f1;
     --color-accent: #c7d2fe;
-    --color-text: #0a2540;
-    --color-text-light: #425466;
-    --color-text-muted: #697386;
-    --color-border: #e3e8ee;
+    --color-text: #1e293b;
+    --color-text-light: #475569;
+    --color-text-muted: #64748b;
+    --color-border: #e2e8f0;
     --color-bg: #ffffff;
-    --color-bg-subtle: #f6f9fc;
+    --color-bg-subtle: #f8fafc;
     --color-card-bg: #ffffff;
 
     /* Typography */
@@ -218,7 +219,9 @@ body {
 
 .btn-secondary:hover {
     border-color: var(--color-primary);
-    background-color: var(--color-bg-subtle);
+    background-color: rgba(165, 180, 252, 0.08);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
 /* Sections */
@@ -325,6 +328,13 @@ body {
     padding: var(--space-xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.timeline-content:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateX(4px);
+    background-color: rgba(165, 180, 252, 0.02);
 }
 
 .timeline-title {
@@ -371,6 +381,7 @@ body {
 
 .card:hover {
     border-color: var(--color-primary);
+    background-color: rgba(165, 180, 252, 0.02);
     box-shadow: var(--shadow-lg);
     transform: translateY(-2px);
 }
@@ -420,6 +431,13 @@ body {
     background-color: rgba(165, 180, 252, 0.15);
     padding: var(--space-xs) var(--space-md);
     border-radius: var(--radius-sm);
+    transition: var(--transition);
+    cursor: default;
+}
+
+.tag:hover {
+    background-color: rgba(165, 180, 252, 0.25);
+    color: var(--color-primary-darker);
 }
 
 .card-links {
@@ -472,6 +490,14 @@ body {
     background-color: var(--color-bg-subtle);
     padding: var(--space-sm) var(--space-md);
     border-radius: var(--radius);
+    transition: var(--transition);
+    cursor: default;
+}
+
+.skill-item:hover {
+    background-color: rgba(165, 180, 252, 0.15);
+    color: var(--color-primary-darker);
+    transform: translateY(-1px);
 }
 
 /* Contact */
@@ -512,7 +538,9 @@ body {
 
 .contact-link:hover {
     border-color: var(--color-primary);
-    background-color: var(--color-bg-subtle);
+    background-color: rgba(165, 180, 252, 0.05);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
 }
 
 .contact-icon {
