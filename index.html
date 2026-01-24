@@ -5,10 +5,480 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Brandon Noskoviak - Staff Engineering Product Manager | Product Analytics & In-App Content">
     <title>Brandon Noskoviak - Product Manager</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Stripe Color System */
+            --stripe-purple: #635BFF;
+            --stripe-purple-dark: #0A2540;
+            --stripe-blue: #00D4FF;
+            --stripe-green: #00D924;
+
+            /* Grays */
+            --gray-50: #FAFAFA;
+            --gray-100: #F6F9FC;
+            --gray-200: #E3E8EE;
+            --gray-300: #CBD2D9;
+            --gray-400: #98A3AE;
+            --gray-500: #697386;
+            --gray-600: #425466;
+            --gray-700: #3C4257;
+            --gray-800: #1A1F36;
+            --gray-900: #0A2540;
+
+            /* Semantic Colors */
+            --color-background: #FFFFFF;
+            --color-surface: var(--gray-50);
+            --color-border: var(--gray-200);
+            --color-text-primary: var(--gray-900);
+            --color-text-secondary: var(--gray-600);
+            --color-text-tertiary: var(--gray-500);
+
+            /* Spacing (8px base) */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+
+            /* Border Radius */
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-xl: 12px;
+
+            /* Shadows */
+            --shadow-sm: 0 1px 2px rgba(10, 37, 64, 0.05);
+            --shadow-md: 0 4px 8px rgba(10, 37, 64, 0.08);
+            --shadow-lg: 0 8px 16px rgba(10, 37, 64, 0.12);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--color-text-primary);
+            background: var(--color-background);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
+        }
+
+        /* Navigation */
+        .nav {
+            background: var(--color-background);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .nav-container {
+            max-width: 1140px;
+            margin: 0 auto;
+            padding: var(--space-4) var(--space-6);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            text-decoration: none;
+            letter-spacing: -0.01em;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: var(--space-6);
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.15s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--stripe-purple);
+        }
+
+        .nav-link-primary {
+            background: var(--stripe-purple);
+            color: white;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            transition: all 0.15s ease;
+        }
+
+        .nav-link-primary:hover {
+            background: var(--stripe-purple-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: var(--space-20) 0;
+            background: linear-gradient(180deg, var(--gray-50) 0%, var(--color-background) 100%);
+        }
+
+        .hero-content {
+            max-width: 680px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: var(--gray-100);
+            color: var(--stripe-purple);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-xl);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: var(--space-6);
+            border: 1px solid var(--color-border);
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: var(--space-4);
+            color: var(--color-text-primary);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-8);
+            line-height: 1.5;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: var(--space-3);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-3) var(--space-5);
+            font-size: 15px;
+            font-weight: 600;
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.15s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--stripe-purple);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background: var(--stripe-purple-dark);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--color-text-primary);
+            border: 1px solid var(--color-border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gray-300);
+            background: var(--gray-50);
+        }
+
+        /* Sections */
+        .section {
+            padding: var(--space-20) 0;
+        }
+
+        .section-gray {
+            background: var(--gray-50);
+            border-top: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: var(--space-12);
+        }
+
+        .section-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--stripe-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: var(--space-3);
+        }
+
+        .section-title {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+        }
+
+        .section-description {
+            font-size: 18px;
+            color: var(--color-text-secondary);
+            max-width: 640px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-12);
+            align-items: start;
+        }
+
+        .about-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: var(--color-text-secondary);
+        }
+
+        .about-text p {
+            margin-bottom: var(--space-5);
+        }
+
+        .text-large {
+            font-size: 21px;
+            color: var(--color-text-primary);
+            font-weight: 500;
+            line-height: 1.6;
+        }
+
+        .about-image img {
+            width: 100%;
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--color-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Experience Timeline */
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .timeline-item {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            transition: all 0.15s ease;
+        }
+
+        .timeline-item:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .timeline-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .timeline-company {
+            font-size: 15px;
+            color: var(--stripe-purple);
+            font-weight: 600;
+            margin-bottom: var(--space-1);
+        }
+
+        .timeline-date {
+            font-size: 14px;
+            color: var(--color-text-tertiary);
+            margin-bottom: var(--space-4);
+        }
+
+        .timeline-description {
+            font-size: 15px;
+            color: var(--color-text-secondary);
+            line-height: 1.6;
+        }
+
+        /* Skills Section */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-6);
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .skill-card {
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            transition: all 0.15s ease;
+        }
+
+        .skill-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: var(--stripe-purple);
+        }
+
+        .skill-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+        }
+
+        .skill-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+        }
+
+        .skill-item {
+            font-size: 14px;
+            color: var(--color-text-secondary);
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .skill-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Contact Section */
+        .contact-content {
+            max-width: 680px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .contact-text {
+            font-size: 17px;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-8);
+            line-height: 1.6;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: var(--space-4);
+            justify-content: center;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            padding: var(--space-4) var(--space-6);
+            background: white;
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--color-text-primary);
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.15s ease;
+        }
+
+        .contact-link:hover {
+            border-color: var(--stripe-purple);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--gray-50);
+            border-top: 1px solid var(--color-border);
+            padding: var(--space-12) 0;
+        }
+
+        .footer-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--color-text-tertiary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 40px;
+            }
+
+            .section-title {
+                font-size: 32px;
+            }
+
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                gap: var(--space-4);
+            }
+
+            .contact-links {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation -->
@@ -19,7 +489,7 @@
                 <a href="#about" class="nav-link">About</a>
                 <a href="#experience" class="nav-link">Experience</a>
                 <a href="#skills" class="nav-link">Skills</a>
-                <a href="#contact" class="nav-link nav-link-primary">Contact</a>
+                <a href="#contact" class="nav-link-primary">Contact</a>
             </div>
         </div>
     </nav>
@@ -28,8 +498,9 @@
     <section class="hero">
         <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title">Hi, I'm Brandon</h1>
-                <p class="hero-subtitle">Staff Engineering Product Manager | Product Analytics & In-App Content at Splunk</p>
+                <div class="hero-badge">Product Analytics & In-App Content</div>
+                <h1 class="hero-title">Building clarity inside complex products</h1>
+                <p class="hero-subtitle">Staff Engineering Product Manager at Splunk, specializing in analytics infrastructure and user experience at scale.</p>
                 <div class="hero-cta">
                     <a href="#contact" class="btn btn-primary">Get in touch</a>
                     <a href="https://www.linkedin.com/in/bnoskoviak/" class="btn btn-secondary" target="_blank">View LinkedIn</a>
@@ -52,7 +523,7 @@
                     <p>I'm known for setting high standards in platform administration, data integrity, and user-centered content strategy. I focus on making data trustworthy, experiences intuitive, and decisions easier.</p>
                 </div>
                 <div class="about-image">
-                    <img src="https://imgur.com/a/Cyxettf" alt="Brandon Noskoviak">
+                    <img src="data:image/jpeg;base64,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" alt="Brandon Noskoviak">
                 </div>
             </div>
         </div>
@@ -67,28 +538,22 @@
             </div>
             <div class="timeline">
                 <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">Staff Engineering Product Manager</h3>
-                        <p class="timeline-company">Splunk (Cisco)</p>
-                        <p class="timeline-date">Feb 2025 - Present</p>
-                        <p class="timeline-description">Leading product analytics and in-app content strategy. Building systems that enable teams to self-serve insights at scale while maintaining high standards for data integrity and user experience.</p>
-                    </div>
+                    <h3 class="timeline-title">Staff Engineering Product Manager</h3>
+                    <p class="timeline-company">Splunk (Cisco)</p>
+                    <p class="timeline-date">Feb 2025 - Present</p>
+                    <p class="timeline-description">Leading product analytics and in-app content strategy. Building systems that enable teams to self-serve insights at scale while maintaining high standards for data integrity and user experience.</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">Senior Program Manager, Digital Adoption</h3>
-                        <p class="timeline-company">Jamf</p>
-                        <p class="timeline-date">Sep 2020 - Feb 2025 · 4.5 years</p>
-                        <p class="timeline-description">Led digital adoption program designing in-app user onboarding, UX research, and growth guides. Collected and translated product analytics, built customer content awareness, and enabled cross-functional teams to drive outcomes.</p>
-                    </div>
+                    <h3 class="timeline-title">Senior Program Manager, Digital Adoption</h3>
+                    <p class="timeline-company">Jamf</p>
+                    <p class="timeline-date">Sep 2020 - Feb 2025 · 4.5 years</p>
+                    <p class="timeline-description">Led digital adoption program designing in-app user onboarding, UX research, and growth guides. Collected and translated product analytics, built customer content awareness, and enabled cross-functional teams to drive outcomes.</p>
                 </div>
                 <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h3 class="timeline-title">Enterprise Customer Success Manager</h3>
-                        <p class="timeline-company">Jamf</p>
-                        <p class="timeline-date">2018 - 2020 · 2 years</p>
-                        <p class="timeline-description">Helped strategic customers deliver enterprise-grade Apple deployments. Provided advanced workflows for Jamf Pro, Connect, and Protect, along with interactive training and cross-departmental collaboration.</p>
-                    </div>
+                    <h3 class="timeline-title">Enterprise Customer Success Manager</h3>
+                    <p class="timeline-company">Jamf</p>
+                    <p class="timeline-date">2018 - 2020 · 2 years</p>
+                    <p class="timeline-description">Helped strategic customers deliver enterprise-grade Apple deployments. Provided advanced workflows for Jamf Pro, Connect, and Protect, along with interactive training and cross-departmental collaboration.</p>
                 </div>
             </div>
         </div>
@@ -192,16 +657,6 @@
                     });
                 }
             });
-        });
-
-        // Add scroll effect to nav
-        const nav = document.querySelector('.nav');
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 0) {
-                nav.classList.add('nav-scrolled');
-            } else {
-                nav.classList.remove('nav-scrolled');
-            }
         });
     </script>
 </body>
