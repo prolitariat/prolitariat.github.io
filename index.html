@@ -403,6 +403,19 @@
             scroll-behavior: smooth;
         }
 
+        /* Smooth scroll container */
+        #smooth-scroll-container {
+            will-change: transform;
+        }
+
+        /* Hide scrollbar during smooth scroll (optional - cleaner look) */
+        body.smooth-scroll-active {
+            overflow: hidden;
+        }
+        body.smooth-scroll-active::-webkit-scrollbar {
+            display: none;
+        }
+
         /* Selection */
         ::selection {
             background: rgba(99, 102, 241, 0.2);
@@ -637,6 +650,139 @@
             const cards = document.querySelectorAll('.glass-card');
             const profile = document.querySelector('.profile-ring');
 
+            // ========== SMOOTH SCROLL (Lerped) ==========
+            // This creates that buttery, momentum-based scroll feel
+            const smoothScroll = {
+                current: window.scrollY,
+                target: window.scrollY,
+                ease: 0.08, // Lower = smoother/slower, Higher = snappier
+                rafId: null,
+                enabled: true
+            };
+
+            // Check for reduced motion preference
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                smoothScroll.enabled = false;
+            }
+
+            // Only enable on non-touch devices (touch has native momentum)
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            if (isTouchDevice) {
+                smoothScroll.enabled = false;
+            }
+
+            if (smoothScroll.enabled) {
+                // Create wrapper for smooth scroll
+                const body = document.body;
+                const html = document.documentElement;
+
+                // Set body to fixed and use transform for scroll
+                document.body.style.position = 'fixed';
+                document.body.style.top = '0';
+                document.body.style.left = '0';
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+                document.body.style.overflow = 'hidden';
+
+                // Create scrollable container
+                const scrollContainer = document.createElement('div');
+                scrollContainer.id = 'smooth-scroll-container';
+                scrollContainer.style.cssText = 'will-change: transform;';
+
+                // Move main content into container
+                while (body.firstChild) {
+                    if (body.firstChild.nodeName !== 'SCRIPT') {
+                        scrollContainer.appendChild(body.firstChild);
+                    } else {
+                        break;
+                    }
+                }
+                body.insertBefore(scrollContainer, body.firstChild);
+
+                // Get scroll height
+                function getScrollHeight() {
+                    return scrollContainer.scrollHeight - window.innerHeight;
+                }
+
+                // Handle keyboard scrolling
+                window.addEventListener('keydown', (e) => {
+                    const scrollAmount = window.innerHeight * 0.8;
+                    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
+                        smoothScroll.target += scrollAmount;
+                    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
+                        smoothScroll.target -= scrollAmount;
+                    } else if (e.key === 'Home') {
+                        smoothScroll.target = 0;
+                    } else if (e.key === 'End') {
+                        smoothScroll.target = getScrollHeight();
+                    } else if (e.key === ' ') {
+                        smoothScroll.target += e.shiftKey ? -scrollAmount : scrollAmount;
+                    }
+                    smoothScroll.target = Math.max(0, Math.min(smoothScroll.target, getScrollHeight()));
+                });
+
+                // Add class to body
+                document.body.classList.add('smooth-scroll-active');
+
+                // Inertia/momentum tracking
+                let wheelVelocity = 0;
+                let lastWheelTime = performance.now();
+
+                // Enhanced wheel handler with momentum
+                window.addEventListener('wheel', (e) => {
+                    const now = performance.now();
+                    const timeDelta = now - lastWheelTime;
+                    lastWheelTime = now;
+
+                    // Add momentum based on rapid scrolling
+                    if (timeDelta < 50) {
+                        wheelVelocity = wheelVelocity * 0.8 + e.deltaY * 0.2;
+                    } else {
+                        wheelVelocity = e.deltaY;
+                    }
+
+                    smoothScroll.target += wheelVelocity;
+                    smoothScroll.target = Math.max(0, Math.min(smoothScroll.target, getScrollHeight()));
+                }, { passive: true });
+
+                // Smooth scroll animation loop
+                function smoothScrollLoop() {
+                    // Lerp current toward target with slight acceleration curve
+                    const diff = smoothScroll.target - smoothScroll.current;
+                    const absDiff = Math.abs(diff);
+
+                    // Use faster ease when far from target, slower when close (feels more natural)
+                    const dynamicEase = absDiff > 100 ? 0.12 : absDiff > 20 ? 0.08 : 0.06;
+                    smoothScroll.current += diff * dynamicEase;
+
+                    // Snap when very close
+                    if (absDiff < 0.5) {
+                        smoothScroll.current = smoothScroll.target;
+                    }
+
+                    // Apply transform
+                    scrollContainer.style.transform = `translateY(${-smoothScroll.current}px)`;
+
+                    // Update fake scrollY for other scripts
+                    window.smoothScrollY = smoothScroll.current;
+
+                    smoothScroll.rafId = requestAnimationFrame(smoothScrollLoop);
+                }
+
+                smoothScrollLoop();
+
+                // Override window.scrollY getter for compatibility
+                Object.defineProperty(window, 'scrollY', {
+                    get: () => smoothScroll.current,
+                    configurable: true
+                });
+
+                // Handle resize
+                window.addEventListener('resize', () => {
+                    smoothScroll.target = Math.min(smoothScroll.target, getScrollHeight());
+                });
+            }
+
             // Jelly physics state for each card
             const cardStates = Array.from(cards).map((card, i) => ({
                 element: card,
@@ -663,7 +809,7 @@
             }));
 
             // Global physics
-            let lastScrollY = window.scrollY;
+            let lastScrollY = smoothScroll.enabled ? smoothScroll.current : window.scrollY;
             let scrollVelocity = 0;
             let smoothScrollVelocity = 0;
             let lastTime = performance.now();
@@ -675,34 +821,65 @@
                 scale: 1, scaleVel: 0
             };
 
-            // Entrance observer
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    const state = cardStates.find(s => s.element === entry.target);
-                    if (state) {
-                        state.isVisible = entry.isIntersecting;
-                        if (entry.isIntersecting && state.opacity === 0) {
-                            // Trigger entrance jelly bounce
+            // Entrance observer - for smooth scroll, check visibility manually
+            if (smoothScroll.enabled) {
+                // Manual visibility check for smooth scroll (IntersectionObserver doesn't work with transform scroll)
+                function checkCardVisibility() {
+                    const viewportTop = smoothScroll.current;
+                    const viewportBottom = viewportTop + window.innerHeight;
+
+                    cardStates.forEach((state) => {
+                        const rect = state.element.getBoundingClientRect();
+                        const elementTop = smoothScroll.current + rect.top;
+                        const elementBottom = elementTop + rect.height;
+
+                        const wasVisible = state.isVisible;
+                        state.isVisible = elementBottom > viewportTop && elementTop < viewportBottom;
+
+                        // Trigger entrance animation
+                        if (state.isVisible && !wasVisible && state.opacity === 0) {
                             state.yVelocity = -8;
                             state.scaleYVelocity = 0.08;
                             state.scaleXVelocity = -0.04;
                         }
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+                    });
+                }
 
-            cards.forEach(card => observer.observe(card));
+                // Check visibility periodically
+                setInterval(checkCardVisibility, 100);
+                checkCardVisibility(); // Initial check
+            } else {
+                // Standard IntersectionObserver for native scroll
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        const state = cardStates.find(s => s.element === entry.target);
+                        if (state) {
+                            state.isVisible = entry.isIntersecting;
+                            if (entry.isIntersecting && state.opacity === 0) {
+                                state.yVelocity = -8;
+                                state.scaleYVelocity = 0.08;
+                                state.scaleXVelocity = -0.04;
+                            }
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+                cards.forEach(card => observer.observe(card));
+            }
 
             function updatePhysics() {
                 const now = performance.now();
                 const dt = Math.min((now - lastTime) / 16, 3);
                 lastTime = now;
 
-                // Calculate scroll velocity
-                const currentScrollY = window.scrollY;
+                // Calculate scroll velocity (use smooth scroll position if enabled)
+                const currentScrollY = smoothScroll.enabled ? smoothScroll.current : window.scrollY;
                 const rawVelocity = currentScrollY - lastScrollY;
                 scrollVelocity = rawVelocity;
-                smoothScrollVelocity = smoothScrollVelocity * 0.85 + scrollVelocity * 0.15;
+                // The smooth scroll already lerps, so we use a tighter blend here
+                smoothScrollVelocity = smoothScroll.enabled
+                    ? smoothScrollVelocity * 0.7 + scrollVelocity * 0.3
+                    : smoothScrollVelocity * 0.85 + scrollVelocity * 0.15;
                 lastScrollY = currentScrollY;
 
                 const time = now * 0.001;
