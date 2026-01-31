@@ -106,15 +106,25 @@
             perspective-origin: center top;
         }
 
-        /* Enable 3D transforms on glass cards */
+        /* Enable 3D transforms and smooth jelly animation */
         .glass-card {
             transform-style: preserve-3d;
-            will-change: transform;
+            will-change: transform, opacity;
             backface-visibility: hidden;
+            transform-origin: center center;
         }
 
         .profile-ring {
             will-change: transform;
+            backface-visibility: hidden;
+            transform-origin: center center;
+        }
+
+        /* Ensure inner content doesn't get distorted */
+        .glass-card > * {
+            position: relative;
+            z-index: 1;
+            transform: translateZ(0);
             backface-visibility: hidden;
         }
 
@@ -241,21 +251,9 @@
             }
         }
 
-        .glass-card > * {
-            position: relative;
-            z-index: 1;
-        }
-
-        /* Scroll-triggered jiggle */
-        @keyframes glassJiggle {
-            0% { transform: translateY(20px) rotate(-0.5deg); opacity: 0; }
-            50% { transform: translateY(-4px) rotate(0.3deg); }
-            75% { transform: translateY(2px) rotate(-0.1deg); }
-            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
-        }
-
-        .glass-card.animate-in {
-            animation: glassJiggle 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        /* Cards start invisible, JS handles entrance */
+        .glass-card {
+            opacity: 0;
         }
 
         /* Glass Pills */
@@ -639,175 +637,241 @@
             const cards = document.querySelectorAll('.glass-card');
             const profile = document.querySelector('.profile-ring');
 
-            // Scroll-triggered entrance animations
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry, index) => {
-                    if (entry.isIntersecting) {
-                        setTimeout(() => {
-                            entry.target.classList.add('animate-in');
-                        }, index * 80);
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            });
-
-            cards.forEach(card => {
-                card.style.opacity = '0';
-                observer.observe(card);
-            });
-
-            // Water-like momentum physics
-            let lastScrollY = window.scrollY;
-            let scrollVelocity = 0;
-            let lastTime = performance.now();
-
-            // Physics state for each card
+            // Jelly physics state for each card
             const cardStates = Array.from(cards).map((card, i) => ({
                 element: card,
-                rotation: 0,
-                rotationVelocity: 0,
-                translateY: 0,
-                translateYVelocity: 0,
-                phase: i * 0.5, // Offset each card's wave phase
-                damping: 0.92,
-                stiffness: 0.08,
-                mass: 1 + (i * 0.1) // Heavier cards at bottom
+                // Position
+                y: 0,
+                yVelocity: 0,
+                // Rotation
+                rotateX: 0,
+                rotateZ: 0,
+                rotateXVelocity: 0,
+                rotateZVelocity: 0,
+                // Jelly deformation (scale)
+                scaleX: 1,
+                scaleY: 1,
+                scaleXVelocity: 0,
+                scaleYVelocity: 0,
+                // Card-specific properties
+                phase: i * 0.7,
+                naturalFreq: 0.8 + (i * 0.15), // Different wobble speeds
+                damping: 0.88,
+                // Track visibility
+                isVisible: false,
+                opacity: 0
             }));
+
+            // Global physics
+            let lastScrollY = window.scrollY;
+            let scrollVelocity = 0;
+            let smoothScrollVelocity = 0;
+            let lastTime = performance.now();
 
             // Profile state
             const profileState = {
-                rotation: 0,
-                rotationVelocity: 0,
-                translateY: 0
+                y: 0, yVel: 0,
+                rotate: 0, rotateVel: 0,
+                scale: 1, scaleVel: 0
             };
 
+            // Entrance observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    const state = cardStates.find(s => s.element === entry.target);
+                    if (state) {
+                        state.isVisible = entry.isIntersecting;
+                        if (entry.isIntersecting && state.opacity === 0) {
+                            // Trigger entrance jelly bounce
+                            state.yVelocity = -8;
+                            state.scaleYVelocity = 0.08;
+                            state.scaleXVelocity = -0.04;
+                        }
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
+
+            cards.forEach(card => observer.observe(card));
+
             function updatePhysics() {
-                const currentTime = performance.now();
-                const deltaTime = Math.min((currentTime - lastTime) / 16, 2); // Cap delta
-                lastTime = currentTime;
+                const now = performance.now();
+                const dt = Math.min((now - lastTime) / 16, 3);
+                lastTime = now;
 
+                // Calculate scroll velocity
                 const currentScrollY = window.scrollY;
-                const rawVelocity = (currentScrollY - lastScrollY) / deltaTime;
-
-                // Smooth the velocity
-                scrollVelocity = scrollVelocity * 0.8 + rawVelocity * 0.2;
+                const rawVelocity = currentScrollY - lastScrollY;
+                scrollVelocity = rawVelocity;
+                smoothScrollVelocity = smoothScrollVelocity * 0.85 + scrollVelocity * 0.15;
                 lastScrollY = currentScrollY;
 
-                // Clamp velocity for subtle effect
-                const clampedVelocity = Math.max(-15, Math.min(15, scrollVelocity));
+                const time = now * 0.001;
 
-                // Update each card with water physics
+                // Update each card
                 cardStates.forEach((state, index) => {
-                    // Add scroll velocity as force
-                    const force = clampedVelocity * 0.15;
+                    // Fade in
+                    if (state.isVisible && state.opacity < 1) {
+                        state.opacity = Math.min(1, state.opacity + 0.03 * dt);
+                    }
 
-                    // Spring physics for rotation (tilt based on scroll)
-                    const targetRotation = clampedVelocity * 0.08;
-                    const rotationForce = (targetRotation - state.rotation) * state.stiffness;
-                    state.rotationVelocity += rotationForce / state.mass;
-                    state.rotationVelocity *= state.damping;
-                    state.rotation += state.rotationVelocity * deltaTime;
+                    // Ambient floating wave
+                    const wave = Math.sin(time * state.naturalFreq + state.phase);
+                    const wave2 = Math.sin(time * state.naturalFreq * 0.7 + state.phase * 1.3);
 
-                    // Gentle bobbing motion (like floating on water)
-                    const time = currentTime * 0.001;
-                    const bobAmount = Math.sin(time * 0.8 + state.phase) * 2;
-                    const swayAmount = Math.sin(time * 0.5 + state.phase) * 0.3;
+                    // Scroll creates force
+                    const scrollForce = smoothScrollVelocity * 0.4;
+                    const scrollTilt = smoothScrollVelocity * 0.15;
 
-                    // Combine scroll momentum with ambient floating
-                    const scrollOffset = clampedVelocity * 0.3 * (1 - index * 0.1);
+                    // Spring physics for Y position
+                    const targetY = wave * 3;
+                    state.yVelocity += (targetY - state.y) * 0.04;
+                    state.yVelocity += scrollForce * 0.1;
+                    state.yVelocity *= state.damping;
+                    state.y += state.yVelocity * dt;
 
-                    // Spring physics for vertical movement
-                    const targetY = bobAmount + scrollOffset;
-                    const yForce = (targetY - state.translateY) * 0.06;
-                    state.translateYVelocity += yForce;
-                    state.translateYVelocity *= 0.9;
-                    state.translateY += state.translateYVelocity * deltaTime;
+                    // Spring physics for X rotation (tilt forward/back on scroll)
+                    const targetRotateX = scrollTilt + wave2 * 0.3;
+                    state.rotateXVelocity += (targetRotateX - state.rotateX) * 0.06;
+                    state.rotateXVelocity *= state.damping;
+                    state.rotateX += state.rotateXVelocity * dt;
 
-                    // Apply transforms with 3D perspective
-                    const rotateX = state.rotation * 0.5;
-                    const rotateZ = swayAmount + (state.rotation * 0.1);
+                    // Spring physics for Z rotation (sway)
+                    const targetRotateZ = wave * 0.4 + scrollTilt * 0.05;
+                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.05;
+                    state.rotateZVelocity *= state.damping;
+                    state.rotateZ += state.rotateZVelocity * dt;
 
+                    // Jelly squash/stretch on scroll
+                    const squashAmount = Math.abs(smoothScrollVelocity) * 0.003;
+                    const targetScaleX = 1 + squashAmount * 0.5;
+                    const targetScaleY = 1 - squashAmount * 0.3;
+
+                    state.scaleXVelocity += (targetScaleX - state.scaleX) * 0.08;
+                    state.scaleYVelocity += (targetScaleY - state.scaleY) * 0.08;
+                    state.scaleXVelocity *= 0.85;
+                    state.scaleYVelocity *= 0.85;
+                    state.scaleX += state.scaleXVelocity * dt;
+                    state.scaleY += state.scaleYVelocity * dt;
+
+                    // Clamp scales
+                    state.scaleX = Math.max(0.96, Math.min(1.04, state.scaleX));
+                    state.scaleY = Math.max(0.96, Math.min(1.04, state.scaleY));
+
+                    // Apply all transforms
+                    state.element.style.opacity = state.opacity;
                     state.element.style.transform = `
-                        perspective(1000px)
-                        translateY(${state.translateY}px)
-                        rotateX(${rotateX}deg)
-                        rotateZ(${rotateZ}deg)
-                        translateZ(0)
+                        translateY(${state.y}px)
+                        rotateX(${state.rotateX}deg)
+                        rotateZ(${state.rotateZ}deg)
+                        scaleX(${state.scaleX})
+                        scaleY(${state.scaleY})
                     `;
 
-                    // Move the highlight reflection based on tilt
-                    const highlight = state.element.querySelector('::after');
-                    const highlightX = -rotateZ * 3;
-                    const highlightY = -rotateX * 2;
-                    state.element.style.setProperty('--highlight-x', `${highlightX}%`);
-                    state.element.style.setProperty('--highlight-y', `${highlightY}%`);
+                    // Update highlight position
+                    state.element.style.setProperty('--highlight-x', `${-state.rotateZ * 5}%`);
+                    state.element.style.setProperty('--highlight-y', `${-state.rotateX * 3}%`);
                 });
 
-                // Profile bobbing
+                // Profile jelly physics
                 if (profile) {
-                    const time = currentTime * 0.001;
-                    const profileBob = Math.sin(time * 0.6) * 3;
-                    const profileSway = Math.sin(time * 0.4) * 0.5;
+                    const wave = Math.sin(time * 0.5);
+                    const wave2 = Math.cos(time * 0.3);
 
-                    const targetRotation = clampedVelocity * 0.05;
-                    profileState.rotationVelocity += (targetRotation - profileState.rotation) * 0.1;
-                    profileState.rotationVelocity *= 0.9;
-                    profileState.rotation += profileState.rotationVelocity * deltaTime;
+                    profileState.yVel += (wave * 4 - profileState.y) * 0.05;
+                    profileState.yVel += smoothScrollVelocity * 0.05;
+                    profileState.yVel *= 0.9;
+                    profileState.y += profileState.yVel * dt;
+
+                    profileState.rotateVel += (wave2 * 1.5 + smoothScrollVelocity * 0.08 - profileState.rotate) * 0.06;
+                    profileState.rotateVel *= 0.88;
+                    profileState.rotate += profileState.rotateVel * dt;
+
+                    const targetScale = 1 - Math.abs(smoothScrollVelocity) * 0.002;
+                    profileState.scaleVel += (targetScale - profileState.scale) * 0.1;
+                    profileState.scaleVel *= 0.85;
+                    profileState.scale += profileState.scaleVel * dt;
+                    profileState.scale = Math.max(0.97, Math.min(1.03, profileState.scale));
 
                     profile.style.transform = `
-                        translateY(${profileBob + currentScrollY * 0.02}px)
-                        rotateZ(${profileSway + profileState.rotation * 0.2}deg)
+                        translateY(${profileState.y}px)
+                        rotateZ(${profileState.rotate}deg)
+                        scale(${profileState.scale})
                     `;
                 }
 
                 requestAnimationFrame(updatePhysics);
             }
 
-            // Start the physics loop
+            // Start physics
             requestAnimationFrame(updatePhysics);
 
-            // Water ripple effect on click
-            cards.forEach(card => {
+            // Ripple effect on click
+            cards.forEach((card, index) => {
                 card.addEventListener('click', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
 
+                    // Create ripple
                     const ripple = document.createElement('span');
                     ripple.className = 'ripple';
-                    ripple.style.left = `${x}px`;
-                    ripple.style.top = `${y}px`;
-                    ripple.style.width = '100px';
-                    ripple.style.height = '100px';
-                    ripple.style.marginLeft = '-50px';
-                    ripple.style.marginTop = '-50px';
-
+                    ripple.style.cssText = `left:${x}px;top:${y}px;width:100px;height:100px;margin:-50px`;
                     card.appendChild(ripple);
-
-                    // Add a little "splash" to nearby cards
-                    const cardIndex = cardStates.findIndex(s => s.element === card);
-                    if (cardIndex !== -1) {
-                        cardStates[cardIndex].rotationVelocity += (Math.random() - 0.5) * 2;
-                        cardStates[cardIndex].translateYVelocity -= 3;
-                    }
-
                     setTimeout(() => ripple.remove(), 800);
+
+                    // Jelly bounce on click
+                    const state = cardStates[index];
+                    state.yVelocity -= 6;
+                    state.scaleXVelocity += 0.06;
+                    state.scaleYVelocity -= 0.04;
+                    state.rotateZVelocity += (Math.random() - 0.5) * 2;
+
+                    // Ripple effect to nearby cards
+                    cardStates.forEach((s, i) => {
+                        if (i !== index) {
+                            const distance = Math.abs(i - index);
+                            const strength = 0.5 / distance;
+                            setTimeout(() => {
+                                s.yVelocity -= 3 * strength;
+                                s.rotateZVelocity += (Math.random() - 0.5) * strength;
+                            }, distance * 50);
+                        }
+                    });
                 });
             });
 
-            // Add subtle mouse parallax to cards
+            // Mouse movement adds gentle force
+            let mouseX = 0, mouseY = 0;
             document.addEventListener('mousemove', (e) => {
-                const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-                const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+                const newMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                const newMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+                const mouseVelX = newMouseX - mouseX;
+                const mouseVelY = newMouseY - mouseY;
+                mouseX = newMouseX;
+                mouseY = newMouseY;
 
-                cardStates.forEach((state, index) => {
-                    const influence = 0.3 - (index * 0.05); // Less influence on lower cards
-                    state.rotationVelocity += mouseX * influence * 0.02;
+                cardStates.forEach((state, i) => {
+                    const influence = 0.15 / (1 + i * 0.3);
+                    state.rotateZVelocity += mouseVelX * influence;
+                    state.rotateXVelocity -= mouseVelY * influence * 0.5;
                 });
             });
+
+            // Touch support for mobile
+            let lastTouchY = 0;
+            document.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                const touchVelY = touch.clientY - lastTouchY;
+                lastTouchY = touch.clientY;
+
+                cardStates.forEach((state) => {
+                    state.yVelocity += touchVelY * 0.02;
+                });
+            }, { passive: true });
+
+            document.addEventListener('touchstart', (e) => {
+                lastTouchY = e.touches[0].clientY;
+            }, { passive: true });
         });
     </script>
 
