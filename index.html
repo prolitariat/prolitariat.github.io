@@ -41,101 +41,101 @@
             font-style: normal;
         }
 
-        /* Light Background with subtle gradient */
+        /* Cloudy Sky + Opalescent Background */
         body {
-            background: #f5f5f7;
-            background-image:
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(14, 165, 233, 0.06) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.05) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, rgba(34, 211, 238, 0.04) 0px, transparent 50%);
+            background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 25%, #f0e7ff 50%, #e0f2fe 75%, #ede9fe 100%);
+            background-attachment: fixed;
             min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                radial-gradient(ellipse 80% 50% at 20% 20%, rgba(165, 180, 252, 0.5) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 30%, rgba(147, 197, 253, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse 70% 50% at 40% 70%, rgba(196, 181, 253, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse 50% 30% at 70% 80%, rgba(165, 243, 252, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse 90% 60% at 10% 90%, rgba(251, 207, 232, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
         }
 
         /* Glass Card - Light Mode */
         .glass-card {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(20px) saturate(120%);
-            -webkit-backdrop-filter: blur(20px) saturate(120%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(24px) saturate(140%);
+            -webkit-backdrop-filter: blur(24px) saturate(140%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow:
-                0 1px 2px rgba(0, 0, 0, 0.04),
-                0 4px 16px rgba(0, 0, 0, 0.03);
+                0 1px 2px rgba(0, 0, 0, 0.03),
+                0 8px 32px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
             position: relative;
             transition: all 0.2s ease;
         }
 
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.55);
+            background: rgba(255, 255, 255, 0.6);
             box-shadow:
-                0 1px 2px rgba(0, 0, 0, 0.04),
-                0 8px 32px rgba(0, 0, 0, 0.05);
-            transform: translateY(-1px);
+                0 1px 2px rgba(0, 0, 0, 0.03),
+                0 12px 40px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transform: translateY(-2px);
         }
 
         /* Glass Pills */
         .glass-pill {
-            background: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             transition: all 0.2s ease;
         }
 
         .glass-pill:hover {
-            background: rgba(255, 255, 255, 0.55);
-            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.65);
+            border-color: rgba(255, 255, 255, 0.7);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
         }
 
         /* Liquid Glass Profile Ring - Light Mode */
         .profile-ring {
             position: relative;
-            padding: 3px;
+            padding: 4px;
             border-radius: 0.5rem;
-            background: linear-gradient(
-                145deg,
-                rgba(255, 255, 255, 0.9),
-                rgba(240, 245, 255, 0.8),
-                rgba(255, 255, 255, 0.85)
-            );
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             box-shadow:
-                0 2px 8px rgba(0, 0, 0, 0.08),
-                0 8px 32px rgba(0, 0, 0, 0.06),
-                inset 0 1px 1px rgba(255, 255, 255, 1);
-        }
-
-        .profile-ring::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 0.5rem;
-            padding: 3px;
-            background: linear-gradient(
-                135deg,
-                rgba(255, 255, 255, 0.8) 0%,
-                rgba(200, 210, 230, 0.3) 50%,
-                rgba(255, 255, 255, 0.6) 100%
-            );
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
+                0 4px 16px rgba(0, 0, 0, 0.06),
+                0 8px 32px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         /* Contact Links - Light Mode */
         .contact-link {
-            background: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             transition: all 0.2s ease;
         }
 
         .contact-link:hover {
-            background: rgba(255, 255, 255, 0.55);
-            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.65);
+            border-color: rgba(255, 255, 255, 0.7);
             transform: translateY(-2px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
         }
