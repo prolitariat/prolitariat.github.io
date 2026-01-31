@@ -102,6 +102,20 @@
         main {
             position: relative;
             z-index: 1;
+            perspective: 1200px;
+            perspective-origin: center top;
+        }
+
+        /* Enable 3D transforms on glass cards */
+        .glass-card {
+            transform-style: preserve-3d;
+            will-change: transform;
+            backface-visibility: hidden;
+        }
+
+        .profile-ring {
+            will-change: transform;
+            backface-visibility: hidden;
         }
 
         /* Glass Card - Light Mode with Enhanced Depth */
@@ -127,21 +141,53 @@
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Top highlight reflection */
+        /* Top highlight reflection - moves with tilt */
+        .glass-card {
+            --highlight-x: 0%;
+            --highlight-y: 0%;
+        }
+
         .glass-card::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.15) 0%,
-                transparent 100%
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                ellipse 50% 40% at calc(50% + var(--highlight-x)) calc(30% + var(--highlight-y)),
+                rgba(255, 255, 255, 0.25) 0%,
+                rgba(255, 255, 255, 0.1) 30%,
+                transparent 60%
             );
             border-radius: inherit;
             pointer-events: none;
+            transform-origin: center center;
+        }
+
+        /* Caustic light effect */
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 30% 20% at 20% 80%, rgba(150, 220, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse 25% 15% at 80% 70%, rgba(200, 180, 255, 0.06) 0%, transparent 50%);
+            border-radius: inherit;
+            pointer-events: none;
+            opacity: 0.8;
+            animation: causticShift 8s ease-in-out infinite;
+        }
+
+        @keyframes causticShift {
+            0%, 100% {
+                background-position: 0% 0%, 100% 100%;
+                opacity: 0.6;
+            }
+            50% {
+                background-position: 10% 10%, 90% 90%;
+                opacity: 0.9;
+            }
         }
 
         .glass-card:hover {
@@ -166,6 +212,33 @@
         .glass-card:active {
             transform: scale(0.985) translateY(0);
             transition: all 0.1s ease;
+        }
+
+        /* Water ripple on click */
+        .glass-card .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.4) 0%,
+                rgba(255, 255, 255, 0.2) 40%,
+                transparent 70%
+            );
+            transform: scale(0);
+            animation: rippleEffect 0.8s ease-out forwards;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        @keyframes rippleEffect {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
         }
 
         .glass-card > * {
@@ -562,14 +635,14 @@
     </main>
 
     <script>
-        // Scroll-triggered animations with Intersection Observer
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.glass-card');
+            const profile = document.querySelector('.profile-ring');
 
+            // Scroll-triggered entrance animations
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, index) => {
                     if (entry.isIntersecting) {
-                        // Stagger the animation slightly for each card
                         setTimeout(() => {
                             entry.target.classList.add('animate-in');
                         }, index * 80);
@@ -586,15 +659,155 @@
                 observer.observe(card);
             });
 
-            // Add subtle parallax to profile on scroll
-            const profile = document.querySelector('.profile-ring');
-            if (profile) {
-                window.addEventListener('scroll', () => {
-                    const scrollY = window.scrollY;
-                    const offset = scrollY * 0.03;
-                    profile.style.transform = `translateY(${offset}px)`;
-                }, { passive: true });
+            // Water-like momentum physics
+            let lastScrollY = window.scrollY;
+            let scrollVelocity = 0;
+            let lastTime = performance.now();
+
+            // Physics state for each card
+            const cardStates = Array.from(cards).map((card, i) => ({
+                element: card,
+                rotation: 0,
+                rotationVelocity: 0,
+                translateY: 0,
+                translateYVelocity: 0,
+                phase: i * 0.5, // Offset each card's wave phase
+                damping: 0.92,
+                stiffness: 0.08,
+                mass: 1 + (i * 0.1) // Heavier cards at bottom
+            }));
+
+            // Profile state
+            const profileState = {
+                rotation: 0,
+                rotationVelocity: 0,
+                translateY: 0
+            };
+
+            function updatePhysics() {
+                const currentTime = performance.now();
+                const deltaTime = Math.min((currentTime - lastTime) / 16, 2); // Cap delta
+                lastTime = currentTime;
+
+                const currentScrollY = window.scrollY;
+                const rawVelocity = (currentScrollY - lastScrollY) / deltaTime;
+
+                // Smooth the velocity
+                scrollVelocity = scrollVelocity * 0.8 + rawVelocity * 0.2;
+                lastScrollY = currentScrollY;
+
+                // Clamp velocity for subtle effect
+                const clampedVelocity = Math.max(-15, Math.min(15, scrollVelocity));
+
+                // Update each card with water physics
+                cardStates.forEach((state, index) => {
+                    // Add scroll velocity as force
+                    const force = clampedVelocity * 0.15;
+
+                    // Spring physics for rotation (tilt based on scroll)
+                    const targetRotation = clampedVelocity * 0.08;
+                    const rotationForce = (targetRotation - state.rotation) * state.stiffness;
+                    state.rotationVelocity += rotationForce / state.mass;
+                    state.rotationVelocity *= state.damping;
+                    state.rotation += state.rotationVelocity * deltaTime;
+
+                    // Gentle bobbing motion (like floating on water)
+                    const time = currentTime * 0.001;
+                    const bobAmount = Math.sin(time * 0.8 + state.phase) * 2;
+                    const swayAmount = Math.sin(time * 0.5 + state.phase) * 0.3;
+
+                    // Combine scroll momentum with ambient floating
+                    const scrollOffset = clampedVelocity * 0.3 * (1 - index * 0.1);
+
+                    // Spring physics for vertical movement
+                    const targetY = bobAmount + scrollOffset;
+                    const yForce = (targetY - state.translateY) * 0.06;
+                    state.translateYVelocity += yForce;
+                    state.translateYVelocity *= 0.9;
+                    state.translateY += state.translateYVelocity * deltaTime;
+
+                    // Apply transforms with 3D perspective
+                    const rotateX = state.rotation * 0.5;
+                    const rotateZ = swayAmount + (state.rotation * 0.1);
+
+                    state.element.style.transform = `
+                        perspective(1000px)
+                        translateY(${state.translateY}px)
+                        rotateX(${rotateX}deg)
+                        rotateZ(${rotateZ}deg)
+                        translateZ(0)
+                    `;
+
+                    // Move the highlight reflection based on tilt
+                    const highlight = state.element.querySelector('::after');
+                    const highlightX = -rotateZ * 3;
+                    const highlightY = -rotateX * 2;
+                    state.element.style.setProperty('--highlight-x', `${highlightX}%`);
+                    state.element.style.setProperty('--highlight-y', `${highlightY}%`);
+                });
+
+                // Profile bobbing
+                if (profile) {
+                    const time = currentTime * 0.001;
+                    const profileBob = Math.sin(time * 0.6) * 3;
+                    const profileSway = Math.sin(time * 0.4) * 0.5;
+
+                    const targetRotation = clampedVelocity * 0.05;
+                    profileState.rotationVelocity += (targetRotation - profileState.rotation) * 0.1;
+                    profileState.rotationVelocity *= 0.9;
+                    profileState.rotation += profileState.rotationVelocity * deltaTime;
+
+                    profile.style.transform = `
+                        translateY(${profileBob + currentScrollY * 0.02}px)
+                        rotateZ(${profileSway + profileState.rotation * 0.2}deg)
+                    `;
+                }
+
+                requestAnimationFrame(updatePhysics);
             }
+
+            // Start the physics loop
+            requestAnimationFrame(updatePhysics);
+
+            // Water ripple effect on click
+            cards.forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+
+                    const ripple = document.createElement('span');
+                    ripple.className = 'ripple';
+                    ripple.style.left = `${x}px`;
+                    ripple.style.top = `${y}px`;
+                    ripple.style.width = '100px';
+                    ripple.style.height = '100px';
+                    ripple.style.marginLeft = '-50px';
+                    ripple.style.marginTop = '-50px';
+
+                    card.appendChild(ripple);
+
+                    // Add a little "splash" to nearby cards
+                    const cardIndex = cardStates.findIndex(s => s.element === card);
+                    if (cardIndex !== -1) {
+                        cardStates[cardIndex].rotationVelocity += (Math.random() - 0.5) * 2;
+                        cardStates[cardIndex].translateYVelocity -= 3;
+                    }
+
+                    setTimeout(() => ripple.remove(), 800);
+                });
+            });
+
+            // Add subtle mouse parallax to cards
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+                const mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+
+                cardStates.forEach((state, index) => {
+                    const influence = 0.3 - (index * 0.05); // Less influence on lower cards
+                    state.rotationVelocity += mouseX * influence * 0.02;
+                });
+            });
         });
     </script>
 
