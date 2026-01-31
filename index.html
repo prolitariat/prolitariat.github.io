@@ -245,9 +245,9 @@
             }
         }
 
-        /* Cards start invisible, JS handles entrance */
+        /* Cards are visible immediately */
         .glass-card {
-            opacity: 0;
+            opacity: 1;
         }
 
         /* Glass Pills */
@@ -408,27 +408,6 @@
             color: #111;
         }
 
-        /* Fade in animation */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(16px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            animation: fadeInUp 0.5s ease-out forwards;
-        }
-
-        .animate-delay-1 { animation-delay: 0.1s; opacity: 0; }
-        .animate-delay-2 { animation-delay: 0.2s; opacity: 0; }
-        .animate-delay-3 { animation-delay: 0.3s; opacity: 0; }
-        .animate-delay-4 { animation-delay: 0.4s; opacity: 0; }
-        .animate-delay-5 { animation-delay: 0.5s; opacity: 0; }
     </style>
 </head>
 <body class="font-charter text-gray-800 antialiased">
@@ -436,7 +415,7 @@
     <main class="max-w-2xl mx-auto px-6 py-16 md:py-24">
 
         <!-- Hero Section -->
-        <header class="mb-16 animate-fade-in">
+        <header class="mb-16">
             <div class="flex flex-col md:flex-row md:items-center gap-8 mb-8">
                 <!-- Profile Image with Liquid Glass Ring -->
                 <div class="profile-ring shrink-0 w-fit">
@@ -625,7 +604,7 @@
         </section>
 
         <!-- Footer -->
-        <footer class="text-center pt-4 animate-fade-in animate-delay-5">
+        <footer class="text-center pt-4">
             <p class="text-sm text-gray-600">
                 © 2026 Brandon Noskoviak
             </p>
@@ -638,36 +617,20 @@
             const cards = document.querySelectorAll('.glass-card');
 
             // Check for reduced motion preference
-            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
             // Card states - each card has independent response characteristics
             const cardStates = Array.from(cards).map((card, i) => ({
                 element: card,
                 y: 0,
                 targetY: 0,
-                // Each card responds slightly differently
                 responseFactor: 0.002 + (i * 0.0008),
-                easeSpeed: 0.08 + (i * 0.015),
-                isVisible: false,
-                opacity: 0
+                easeSpeed: 0.08 + (i * 0.015)
             }));
 
-            // Global physics
             let lastScrollY = window.scrollY;
             let scrollVelocity = 0;
             let lastTime = performance.now();
-
-            // Entrance observer
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach((entry) => {
-                    const state = cardStates.find(s => s.element === entry.target);
-                    if (state) {
-                        state.isVisible = entry.isIntersecting;
-                    }
-                });
-            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-
-            cards.forEach(card => observer.observe(card));
 
             function updatePhysics() {
                 const now = performance.now();
@@ -682,26 +645,13 @@
 
                 // Update each card independently
                 cardStates.forEach((state) => {
-                    // Fade in when visible
-                    if (state.isVisible && state.opacity < 1) {
-                        state.opacity = Math.min(1, state.opacity + 0.04 * dt);
+                    state.targetY = scrollVelocity * state.responseFactor * 50;
+                    state.y += (state.targetY - state.y) * state.easeSpeed * dt;
+
+                    if (Math.abs(state.y) < 0.1 && Math.abs(scrollVelocity) < 0.5) {
+                        state.y = 0;
                     }
 
-                    if (!prefersReducedMotion) {
-                        // Set target based on scroll velocity (each card responds differently)
-                        state.targetY = scrollVelocity * state.responseFactor * 50;
-
-                        // Ease toward target (smooth transition, no jiggle)
-                        state.y += (state.targetY - state.y) * state.easeSpeed * dt;
-
-                        // Snap to zero when very close and no scroll
-                        if (Math.abs(state.y) < 0.1 && Math.abs(scrollVelocity) < 0.5) {
-                            state.y = 0;
-                        }
-                    }
-
-                    // Apply transforms
-                    state.element.style.opacity = state.opacity;
                     state.element.style.transform = state.y !== 0
                         ? `translateY(${state.y}px)`
                         : '';
