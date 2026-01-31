@@ -14,17 +14,24 @@ const experiences: ExperienceItem[] = [
   {
     company: "Splunk (Cisco)",
     role: "Staff Engineering Product Manager",
-    period: "2022 — Present",
+    period: "Feb 2025 — Present",
     description:
-      "Leading product strategy for analytics and in-app content experiences. Building systems that transform complex observability data into actionable insights for product teams and end users.",
+      "Leading Product Analytics & In-App Content. Building systems that transform complex observability data into actionable insights, enabling teams to self-serve analytics at scale.",
     current: true,
   },
   {
     company: "Jamf",
-    role: "Senior Product Manager",
-    period: "2019 — 2022",
+    role: "Senior Program Manager, Digital Adoption",
+    period: "Sep 2020 — Feb 2025",
     description:
-      "Drove product development for Apple device management solutions, helping organizations secure and manage their Apple ecosystem at enterprise scale.",
+      "Led the digital adoption program, designing and delivering in-app user onboarding, user experience research, support, and growth guides aligned with our design system. Enabled leaders across the organization to leverage product analytics and community engagement.",
+  },
+  {
+    company: "Jamf",
+    role: "Enterprise Customer Success Manager",
+    period: "2019 — 2020",
+    description:
+      "Helped strategic customers deliver enterprise-grade Apple deployments using Jamf Pro, Jamf Connect, Jamf Protect, and custom integrations.",
   },
 ];
 
