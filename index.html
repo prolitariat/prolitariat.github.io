@@ -208,6 +208,231 @@
             color: #111;
         }
 
+        /* ========== In-App Tour Styles ========== */
+
+        /* Glass Bead Trigger Button */
+        .tour-trigger {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.06),
+                0 4px 16px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .tour-trigger:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.05);
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                0 8px 24px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .tour-trigger svg {
+            width: 20px;
+            height: 20px;
+            color: #4a5568;
+            opacity: 0.7;
+        }
+
+        .tour-trigger:hover svg {
+            opacity: 0.9;
+        }
+
+        /* Tour Overlay */
+        .tour-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1001;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tour-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* Spotlight cutout effect */
+        .tour-spotlight {
+            position: fixed;
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.4);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1002;
+            pointer-events: none;
+        }
+
+        /* Tour Tooltip */
+        .tour-tooltip {
+            position: fixed;
+            max-width: 340px;
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.92) 0%,
+                rgba(255, 255, 255, 0.85) 100%
+            );
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                0 8px 24px rgba(0, 0, 0, 0.08),
+                0 16px 48px rgba(0, 0, 0, 0.06);
+            z-index: 1003;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .tour-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .tour-tooltip-title {
+            font-weight: 700;
+            font-size: 18px;
+            color: #0a0a0a;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .tour-tooltip-content {
+            font-size: 15px;
+            color: #374151;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .tour-tooltip-meta {
+            font-size: 12px;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 4px;
+        }
+
+        /* Tour Navigation */
+        .tour-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .tour-progress {
+            display: flex;
+            gap: 6px;
+        }
+
+        .tour-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.15);
+            transition: all 0.2s ease;
+        }
+
+        .tour-dot.active {
+            background: #6366f1;
+            transform: scale(1.2);
+        }
+
+        .tour-dot.completed {
+            background: rgba(99, 102, 241, 0.4);
+        }
+
+        .tour-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tour-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            border: none;
+            font-family: inherit;
+        }
+
+        .tour-btn-secondary {
+            background: rgba(0, 0, 0, 0.05);
+            color: #374151;
+        }
+
+        .tour-btn-secondary:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .tour-btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .tour-btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .tour-btn-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+
+        .tour-btn-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .tour-btn-close svg {
+            width: 14px;
+            height: 14px;
+            color: #6b7280;
+        }
+
+        /* Hide trigger when tour is active */
+        .tour-active .tour-trigger {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Highlighted element gets pointer events */
+        .tour-highlight {
+            position: relative;
+            z-index: 1002;
+        }
+
     </style>
 </head>
 <body class="font-charter text-gray-800 antialiased">
@@ -215,7 +440,7 @@
     <main class="max-w-2xl mx-auto px-6 py-16 md:py-24">
 
         <!-- Hero Section -->
-        <header class="mb-16">
+        <header class="mb-16" data-tour="hero">
             <div class="flex flex-col md:flex-row md:items-center gap-8 mb-8">
                 <!-- Profile Image with Liquid Glass Ring -->
                 <div class="profile-ring shrink-0 w-fit">
@@ -245,7 +470,7 @@
         </header>
 
         <!-- About Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6" data-tour="about">
             <h2 class="heading-charter text-2xl mb-6">
                 About
             </h2>
@@ -262,7 +487,7 @@
         </section>
 
         <!-- Experience Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6" data-tour="experience">
             <h2 class="heading-charter text-2xl mb-8">
                 Experience
             </h2>
@@ -325,7 +550,7 @@
         </section>
 
         <!-- Expertise Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6" data-tour="expertise">
             <h2 class="heading-charter text-2xl mb-4">
                 Expertise
             </h2>
@@ -362,7 +587,7 @@
         </section>
 
         <!-- Contact Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-10">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-10" data-tour="contact">
             <h2 class="heading-charter text-2xl mb-4">
                 Get in Touch
             </h2>
@@ -411,6 +636,39 @@
         </footer>
 
     </main>
+
+    <!-- Tour Trigger Button -->
+    <button class="tour-trigger" id="tourTrigger" aria-label="Take a tour of this page">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <path d="M12 17h.01"/>
+        </svg>
+    </button>
+
+    <!-- Tour Overlay -->
+    <div class="tour-overlay" id="tourOverlay">
+        <div class="tour-spotlight" id="tourSpotlight"></div>
+    </div>
+
+    <!-- Tour Tooltip -->
+    <div class="tour-tooltip" id="tourTooltip">
+        <button class="tour-btn-close" id="tourClose" aria-label="Close tour">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+            </svg>
+        </button>
+        <div class="tour-tooltip-meta" id="tourMeta"></div>
+        <div class="tour-tooltip-title" id="tourTitle"></div>
+        <div class="tour-tooltip-content" id="tourContent"></div>
+        <div class="tour-nav">
+            <div class="tour-progress" id="tourProgress"></div>
+            <div class="tour-buttons">
+                <button class="tour-btn tour-btn-secondary" id="tourPrev">Back</button>
+                <button class="tour-btn tour-btn-primary" id="tourNext">Next</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -461,6 +719,208 @@
             }
 
             requestAnimationFrame(updatePhysics);
+        });
+
+        // ========== In-App Content Tour ==========
+        const tourSteps = [
+            {
+                target: '[data-tour="hero"]',
+                meta: 'In-App Content',
+                title: 'Welcome to the Tour',
+                content: 'This is an example of in-app content — contextual guidance that helps users understand a product. Click "Next" to explore each section, or close anytime.'
+            },
+            {
+                target: '[data-tour="about"]',
+                meta: 'Section 1 of 4',
+                title: 'About Section',
+                content: 'Good in-app content surfaces at the right moment. This section introduces who I am and what I do — short, scannable, and immediately useful.'
+            },
+            {
+                target: '[data-tour="experience"]',
+                meta: 'Section 2 of 4',
+                title: 'Experience Section',
+                content: 'Progressive disclosure in action: roles are structured to let visitors scan quickly or dive deep. Each entry follows a consistent pattern for easy comprehension.'
+            },
+            {
+                target: '[data-tour="expertise"]',
+                meta: 'Section 3 of 4',
+                title: 'Expertise Section',
+                content: 'These glass pills use visual hierarchy to communicate skills at a glance. Great in-app content respects the user\'s time with clear, scannable formats.'
+            },
+            {
+                target: '[data-tour="contact"]',
+                meta: 'Section 4 of 4',
+                title: 'Contact Section',
+                content: 'Every tour should end with a clear next step. Here, the call-to-action is simple: connect. That\'s the essence of user-respectful engagement.'
+            }
+        ];
+
+        let currentStep = 0;
+        let tourActive = false;
+
+        const trigger = document.getElementById('tourTrigger');
+        const overlay = document.getElementById('tourOverlay');
+        const spotlight = document.getElementById('tourSpotlight');
+        const tooltip = document.getElementById('tourTooltip');
+        const tooltipMeta = document.getElementById('tourMeta');
+        const tooltipTitle = document.getElementById('tourTitle');
+        const tooltipContent = document.getElementById('tourContent');
+        const progress = document.getElementById('tourProgress');
+        const prevBtn = document.getElementById('tourPrev');
+        const nextBtn = document.getElementById('tourNext');
+        const closeBtn = document.getElementById('tourClose');
+
+        function startTour() {
+            tourActive = true;
+            currentStep = 0;
+            document.body.classList.add('tour-active');
+            overlay.classList.add('active');
+            renderProgress();
+            showStep(currentStep);
+        }
+
+        function endTour() {
+            tourActive = false;
+            document.body.classList.remove('tour-active');
+            overlay.classList.remove('active');
+            tooltip.classList.remove('visible');
+
+            // Remove highlight from any elements
+            document.querySelectorAll('.tour-highlight').forEach(el => {
+                el.classList.remove('tour-highlight');
+            });
+        }
+
+        function renderProgress() {
+            progress.innerHTML = tourSteps.map((_, i) => {
+                let className = 'tour-dot';
+                if (i < currentStep) className += ' completed';
+                if (i === currentStep) className += ' active';
+                return `<div class="${className}"></div>`;
+            }).join('');
+        }
+
+        function showStep(index) {
+            const step = tourSteps[index];
+            const target = document.querySelector(step.target);
+
+            if (!target) return;
+
+            // Remove previous highlight
+            document.querySelectorAll('.tour-highlight').forEach(el => {
+                el.classList.remove('tour-highlight');
+            });
+
+            // Scroll target into view
+            target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            // Wait for scroll, then position elements
+            setTimeout(() => {
+                // Add highlight to target
+                target.classList.add('tour-highlight');
+
+                // Position spotlight
+                const rect = target.getBoundingClientRect();
+                const padding = 8;
+                spotlight.style.top = `${rect.top - padding}px`;
+                spotlight.style.left = `${rect.left - padding}px`;
+                spotlight.style.width = `${rect.width + padding * 2}px`;
+                spotlight.style.height = `${rect.height + padding * 2}px`;
+
+                // Update tooltip content
+                tooltipMeta.textContent = step.meta;
+                tooltipTitle.textContent = step.title;
+                tooltipContent.textContent = step.content;
+
+                // Position tooltip
+                positionTooltip(rect);
+
+                // Show tooltip
+                tooltip.classList.add('visible');
+
+                // Update buttons
+                prevBtn.style.display = index === 0 ? 'none' : 'block';
+                nextBtn.textContent = index === tourSteps.length - 1 ? 'Finish' : 'Next';
+
+                // Update progress dots
+                renderProgress();
+            }, 400);
+        }
+
+        function positionTooltip(targetRect) {
+            const tooltipRect = tooltip.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const gap = 16;
+
+            let top, left;
+
+            // Try to position below the target
+            if (targetRect.bottom + gap + tooltipRect.height < viewportHeight) {
+                top = targetRect.bottom + gap;
+            } else {
+                // Position above
+                top = targetRect.top - tooltipRect.height - gap;
+            }
+
+            // Center horizontally relative to target, but keep in viewport
+            left = targetRect.left + (targetRect.width / 2) - (tooltipRect.width / 2);
+            left = Math.max(16, Math.min(left, viewportWidth - tooltipRect.width - 16));
+
+            // Keep in viewport vertically
+            top = Math.max(16, Math.min(top, viewportHeight - tooltipRect.height - 16));
+
+            tooltip.style.top = `${top}px`;
+            tooltip.style.left = `${left}px`;
+        }
+
+        function nextStep() {
+            if (currentStep < tourSteps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            } else {
+                endTour();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        }
+
+        // Event listeners
+        trigger.addEventListener('click', startTour);
+        closeBtn.addEventListener('click', endTour);
+        nextBtn.addEventListener('click', nextStep);
+        prevBtn.addEventListener('click', prevStep);
+
+        // Close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && tourActive) {
+                endTour();
+            }
+            if (e.key === 'ArrowRight' && tourActive) {
+                nextStep();
+            }
+            if (e.key === 'ArrowLeft' && tourActive) {
+                prevStep();
+            }
+        });
+
+        // Close on overlay click (outside spotlight)
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                endTour();
+            }
+        });
+
+        // Reposition on resize
+        window.addEventListener('resize', () => {
+            if (tourActive) {
+                showStep(currentStep);
+            }
         });
     </script>
 
