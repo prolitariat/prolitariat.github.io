@@ -52,7 +52,9 @@
         body::before {
             content: '';
             position: fixed;
-            inset: 0;
+            inset: -20%;
+            width: 140%;
+            height: 140%;
             background-image:
                 radial-gradient(ellipse 80% 50% at 20% 20%, rgba(165, 180, 252, 0.5) 0%, transparent 50%),
                 radial-gradient(ellipse 60% 40% at 80% 30%, rgba(147, 197, 253, 0.4) 0%, transparent 50%),
@@ -61,6 +63,14 @@
                 radial-gradient(ellipse 90% 60% at 10% 90%, rgba(251, 207, 232, 0.3) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
+            animation: cloudDrift 20s ease-in-out infinite;
+        }
+
+        @keyframes cloudDrift {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(2%, 1%) scale(1.02); }
+            50% { transform: translate(-1%, 2%) scale(1); }
+            75% { transform: translate(1%, -1%) scale(1.01); }
         }
 
         main {
@@ -79,7 +89,7 @@
                 0 8px 32px rgba(0, 0, 0, 0.04),
                 inset 0 1px 0 rgba(255, 255, 255, 0.5);
             position: relative;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .glass-card:hover {
@@ -88,7 +98,24 @@
                 0 1px 2px rgba(0, 0, 0, 0.03),
                 0 12px 40px rgba(0, 0, 0, 0.06),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+        }
+
+        .glass-card:active {
+            transform: scale(0.985) translateY(0);
+            transition: all 0.1s ease;
+        }
+
+        /* Scroll-triggered jiggle */
+        @keyframes glassJiggle {
+            0% { transform: translateY(20px) rotate(-0.5deg); opacity: 0; }
+            50% { transform: translateY(-4px) rotate(0.3deg); }
+            75% { transform: translateY(2px) rotate(-0.1deg); }
+            100% { transform: translateY(0) rotate(0deg); opacity: 1; }
+        }
+
+        .glass-card.animate-in {
+            animation: glassJiggle 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
 
         /* Glass Pills */
@@ -98,14 +125,20 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: default;
         }
 
         .glass-pill:hover {
             background: rgba(255, 255, 255, 0.65);
             border-color: rgba(255, 255, 255, 0.7);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        }
+
+        .glass-pill:active {
+            transform: scale(0.95);
+            transition: all 0.1s ease;
         }
 
         /* Liquid Glass Profile Ring - Light Mode */
@@ -121,6 +154,15 @@
                 0 8px 32px rgba(0, 0, 0, 0.04),
                 inset 0 1px 0 rgba(255, 255, 255, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.6);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+        }
+
+        .profile-ring:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow:
+                0 8px 24px rgba(0, 0, 0, 0.08),
+                0 16px 48px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
         }
 
         /* Contact Links - Light Mode */
@@ -130,14 +172,19 @@
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.5);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .contact-link:hover {
             background: rgba(255, 255, 255, 0.65);
             border-color: rgba(255, 255, 255, 0.7);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .contact-link:active {
+            transform: scale(0.95);
+            transition: all 0.1s ease;
         }
 
         /* Charter Typography - Make it Pop */
@@ -217,7 +264,7 @@
         </header>
 
         <!-- About Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6 animate-fade-in animate-delay-1">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
             <h2 class="heading-charter text-2xl mb-6">
                 About
             </h2>
@@ -234,7 +281,7 @@
         </section>
 
         <!-- Experience Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6 animate-fade-in animate-delay-2">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
             <h2 class="heading-charter text-2xl mb-8">
                 Experience
             </h2>
@@ -295,7 +342,7 @@
         </section>
 
         <!-- Expertise Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-6 animate-fade-in animate-delay-3">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-6">
             <h2 class="heading-charter text-2xl mb-4">
                 Expertise
             </h2>
@@ -332,7 +379,7 @@
         </section>
 
         <!-- Contact Section -->
-        <section class="glass-card rounded-lg p-8 md:p-10 mb-10 animate-fade-in animate-delay-4">
+        <section class="glass-card rounded-lg p-8 md:p-10 mb-10">
             <h2 class="heading-charter text-2xl mb-4">
                 Get in Touch
             </h2>
@@ -381,6 +428,43 @@
         </footer>
 
     </main>
+
+    <script>
+        // Scroll-triggered animations with Intersection Observer
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.glass-card');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        // Stagger the animation slightly for each card
+                        setTimeout(() => {
+                            entry.target.classList.add('animate-in');
+                        }, index * 80);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            cards.forEach(card => {
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+
+            // Add subtle parallax to profile on scroll
+            const profile = document.querySelector('.profile-ring');
+            if (profile) {
+                window.addEventListener('scroll', () => {
+                    const scrollY = window.scrollY;
+                    const offset = scrollY * 0.03;
+                    profile.style.transform = `translateY(${offset}px)`;
+                }, { passive: true });
+            }
+        });
+    </script>
 
 </body>
 </html>
