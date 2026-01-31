@@ -636,23 +636,16 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const cards = document.querySelectorAll('.glass-card');
-            const profile = document.querySelector('.profile-ring');
 
             // Check for reduced motion preference
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // Floating physics state for each card
-            // Tuned for a LARGE, CALM body of water - barely perceptible movement
-            const cardStates = Array.from(cards).map((card, i) => ({
+            // Card states - momentum only, no ambient waves
+            const cardStates = Array.from(cards).map((card) => ({
                 element: card,
                 y: 0,
                 yVelocity: 0,
-                rotateZ: 0,
-                rotateZVelocity: 0,
-                // Card-specific properties - very slow, oceanic waves
-                phase: i * 2.5,
-                naturalFreq: 0.04 + (i * 0.008), // Extremely slow wave (like ocean swells)
-                damping: 0.99, // Very high damping = glacial settling
+                damping: 0.96,
                 isVisible: false,
                 opacity: 0
             }));
@@ -662,18 +655,12 @@
             let scrollVelocity = 0;
             let lastTime = performance.now();
 
-            // Profile state
-            const profileState = { y: 0, yVel: 0 };
-
-            // Entrance observer - standard IntersectionObserver
+            // Entrance observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry) => {
                     const state = cardStates.find(s => s.element === entry.target);
                     if (state) {
                         state.isVisible = entry.isIntersecting;
-                        if (entry.isIntersecting && state.opacity === 0) {
-                            state.yVelocity = -0.8; // Gentle entrance
-                        }
                     }
                 });
             }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
@@ -681,93 +668,50 @@
             cards.forEach(card => observer.observe(card));
 
             function updatePhysics() {
-                if (prefersReducedMotion) {
-                    // Just fade in cards without motion
-                    cardStates.forEach(state => {
-                        if (state.isVisible && state.opacity < 1) {
-                            state.opacity = Math.min(1, state.opacity + 0.05);
-                            state.element.style.opacity = state.opacity;
-                        }
-                    });
-                    requestAnimationFrame(updatePhysics);
-                    return;
-                }
-
                 const now = performance.now();
                 const dt = Math.min((now - lastTime) / 16, 3);
                 lastTime = now;
 
-                // Track scroll velocity (smoothed)
+                // Track scroll velocity
                 const currentScrollY = window.scrollY;
                 const rawVelocity = currentScrollY - lastScrollY;
-                scrollVelocity = scrollVelocity * 0.9 + rawVelocity * 0.1;
+                scrollVelocity = scrollVelocity * 0.85 + rawVelocity * 0.15;
                 lastScrollY = currentScrollY;
 
-                const time = now * 0.001;
-
-                // Update each card - like glass floating on a vast, calm lake
+                // Update each card - only responds to momentum
                 cardStates.forEach((state) => {
-                    // Fade in
+                    // Fade in when visible
                     if (state.isVisible && state.opacity < 1) {
-                        state.opacity = Math.min(1, state.opacity + 0.025 * dt);
+                        state.opacity = Math.min(1, state.opacity + 0.04 * dt);
                     }
 
-                    // Extremely slow ambient wave (ocean swell)
-                    const wave = Math.sin(time * state.naturalFreq + state.phase);
+                    if (!prefersReducedMotion) {
+                        // Only apply force from scroll momentum
+                        state.yVelocity += scrollVelocity * 0.003;
 
-                    // Scroll creates tiny force
-                    const scrollInfluence = scrollVelocity * 0.01;
+                        // Spring back to zero
+                        state.yVelocity += (0 - state.y) * 0.02;
+                        state.yVelocity *= state.damping;
+                        state.y += state.yVelocity * dt;
 
-                    // Spring physics for Y - barely moves
-                    const targetY = wave * 0.8;
-                    state.yVelocity += (targetY - state.y) * 0.003;
-                    state.yVelocity += scrollInfluence * 0.005;
-                    state.yVelocity *= state.damping;
-                    state.y += state.yVelocity * dt;
-
-                    // Minimal rotation - almost imperceptible
-                    const targetRotateZ = wave * 0.03;
-                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.002;
-                    state.rotateZVelocity *= state.damping;
-                    state.rotateZ += state.rotateZVelocity * dt;
+                        // Clamp to minimal movement
+                        if (Math.abs(state.y) < 0.01 && Math.abs(state.yVelocity) < 0.01) {
+                            state.y = 0;
+                            state.yVelocity = 0;
+                        }
+                    }
 
                     // Apply transforms
                     state.element.style.opacity = state.opacity;
-                    state.element.style.transform = `
-                        translateY(${state.y}px)
-                        rotateZ(${state.rotateZ}deg)
-                    `;
+                    state.element.style.transform = state.y !== 0
+                        ? `translateY(${state.y}px)`
+                        : '';
                 });
-
-                // Profile - extremely subtle
-                if (profile) {
-                    const wave = Math.sin(time * 0.03);
-                    profileState.yVel += (wave * 0.5 - profileState.y) * 0.002;
-                    profileState.yVel *= 0.99;
-                    profileState.y += profileState.yVel * dt;
-                    profile.style.transform = `translateY(${profileState.y}px)`;
-                }
 
                 requestAnimationFrame(updatePhysics);
             }
 
-            // Start physics
             requestAnimationFrame(updatePhysics);
-
-            // Ripple effect on click (visual only, no physics ripple to other cards)
-            cards.forEach((card) => {
-                card.addEventListener('click', (e) => {
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-
-                    const ripple = document.createElement('span');
-                    ripple.className = 'ripple';
-                    ripple.style.cssText = `left:${x}px;top:${y}px;width:100px;height:100px;margin:-50px`;
-                    card.appendChild(ripple);
-                    setTimeout(() => ripple.remove(), 800);
-                });
-            });
         });
     </script>
 
