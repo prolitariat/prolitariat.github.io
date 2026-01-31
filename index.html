@@ -398,24 +398,6 @@
             color: #111;
         }
 
-        /* Smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
-
-        /* Smooth scroll container */
-        #smooth-scroll-container {
-            will-change: transform;
-        }
-
-        /* Hide scrollbar during smooth scroll (optional - cleaner look) */
-        body.smooth-scroll-active {
-            overflow: hidden;
-        }
-        body.smooth-scroll-active::-webkit-scrollbar {
-            display: none;
-        }
-
         /* Selection */
         ::selection {
             background: rgba(99, 102, 241, 0.2);
@@ -650,293 +632,114 @@
             const cards = document.querySelectorAll('.glass-card');
             const profile = document.querySelector('.profile-ring');
 
-            // ========== SMOOTH SCROLL (Lerped) ==========
-            // This creates that buttery, momentum-based scroll feel
-            const smoothScroll = {
-                current: window.scrollY,
-                target: window.scrollY,
-                ease: 0.08, // Lower = smoother/slower, Higher = snappier
-                rafId: null,
-                enabled: true
-            };
-
             // Check for reduced motion preference
-            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-                smoothScroll.enabled = false;
-            }
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-            // Only enable on non-touch devices (touch has native momentum)
-            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            if (isTouchDevice) {
-                smoothScroll.enabled = false;
-            }
-
-            if (smoothScroll.enabled) {
-                // Create wrapper for smooth scroll
-                const body = document.body;
-                const html = document.documentElement;
-
-                // Set body to fixed and use transform for scroll
-                document.body.style.position = 'fixed';
-                document.body.style.top = '0';
-                document.body.style.left = '0';
-                document.body.style.width = '100%';
-                document.body.style.height = '100%';
-                document.body.style.overflow = 'hidden';
-
-                // Create scrollable container
-                const scrollContainer = document.createElement('div');
-                scrollContainer.id = 'smooth-scroll-container';
-                scrollContainer.style.cssText = 'will-change: transform;';
-
-                // Move main content into container
-                while (body.firstChild) {
-                    if (body.firstChild.nodeName !== 'SCRIPT') {
-                        scrollContainer.appendChild(body.firstChild);
-                    } else {
-                        break;
-                    }
-                }
-                body.insertBefore(scrollContainer, body.firstChild);
-
-                // Get scroll height
-                function getScrollHeight() {
-                    return scrollContainer.scrollHeight - window.innerHeight;
-                }
-
-                // Handle keyboard scrolling
-                window.addEventListener('keydown', (e) => {
-                    const scrollAmount = window.innerHeight * 0.8;
-                    if (e.key === 'ArrowDown' || e.key === 'PageDown') {
-                        smoothScroll.target += scrollAmount;
-                    } else if (e.key === 'ArrowUp' || e.key === 'PageUp') {
-                        smoothScroll.target -= scrollAmount;
-                    } else if (e.key === 'Home') {
-                        smoothScroll.target = 0;
-                    } else if (e.key === 'End') {
-                        smoothScroll.target = getScrollHeight();
-                    } else if (e.key === ' ') {
-                        smoothScroll.target += e.shiftKey ? -scrollAmount : scrollAmount;
-                    }
-                    smoothScroll.target = Math.max(0, Math.min(smoothScroll.target, getScrollHeight()));
-                });
-
-                // Add class to body
-                document.body.classList.add('smooth-scroll-active');
-
-                // Inertia/momentum tracking
-                let wheelVelocity = 0;
-                let lastWheelTime = performance.now();
-
-                // Enhanced wheel handler with momentum
-                window.addEventListener('wheel', (e) => {
-                    const now = performance.now();
-                    const timeDelta = now - lastWheelTime;
-                    lastWheelTime = now;
-
-                    // Add momentum based on rapid scrolling
-                    if (timeDelta < 50) {
-                        wheelVelocity = wheelVelocity * 0.8 + e.deltaY * 0.2;
-                    } else {
-                        wheelVelocity = e.deltaY;
-                    }
-
-                    smoothScroll.target += wheelVelocity;
-                    smoothScroll.target = Math.max(0, Math.min(smoothScroll.target, getScrollHeight()));
-                }, { passive: true });
-
-                // Smooth scroll animation loop
-                function smoothScrollLoop() {
-                    // Lerp current toward target with slight acceleration curve
-                    const diff = smoothScroll.target - smoothScroll.current;
-                    const absDiff = Math.abs(diff);
-
-                    // Use faster ease when far from target, slower when close (feels more natural)
-                    const dynamicEase = absDiff > 100 ? 0.12 : absDiff > 20 ? 0.08 : 0.06;
-                    smoothScroll.current += diff * dynamicEase;
-
-                    // Snap when very close
-                    if (absDiff < 0.5) {
-                        smoothScroll.current = smoothScroll.target;
-                    }
-
-                    // Apply transform
-                    scrollContainer.style.transform = `translateY(${-smoothScroll.current}px)`;
-
-                    // Update fake scrollY for other scripts
-                    window.smoothScrollY = smoothScroll.current;
-
-                    smoothScroll.rafId = requestAnimationFrame(smoothScrollLoop);
-                }
-
-                smoothScrollLoop();
-
-                // Override window.scrollY getter for compatibility
-                Object.defineProperty(window, 'scrollY', {
-                    get: () => smoothScroll.current,
-                    configurable: true
-                });
-
-                // Handle resize
-                window.addEventListener('resize', () => {
-                    smoothScroll.target = Math.min(smoothScroll.target, getScrollHeight());
-                });
-            }
-
-            // Floating water physics state for each card
-            // Tuned for subtle, tasteful movement - NOT jelly/rapid wobble
+            // Floating physics state for each card
+            // Tuned for a LARGE, CALM body of water - barely perceptible movement
             const cardStates = Array.from(cards).map((card, i) => ({
                 element: card,
-                // Position (very gentle floating)
                 y: 0,
                 yVelocity: 0,
-                // Rotation (barely perceptible tilt)
-                rotateX: 0,
                 rotateZ: 0,
-                rotateXVelocity: 0,
                 rotateZVelocity: 0,
-                // Card-specific properties
-                phase: i * 1.2,
-                naturalFreq: 0.15 + (i * 0.02), // Very slow, calm wave
-                damping: 0.97, // High damping = slow, graceful settling
-                // Track visibility
+                // Card-specific properties - very slow, oceanic waves
+                phase: i * 2.5,
+                naturalFreq: 0.04 + (i * 0.008), // Extremely slow wave (like ocean swells)
+                damping: 0.99, // Very high damping = glacial settling
                 isVisible: false,
                 opacity: 0
             }));
 
             // Global physics
-            let lastScrollY = smoothScroll.enabled ? smoothScroll.current : window.scrollY;
+            let lastScrollY = window.scrollY;
             let scrollVelocity = 0;
-            let smoothScrollVelocity = 0;
             let lastTime = performance.now();
 
-            // Profile state (gentle floating only)
-            const profileState = {
-                y: 0, yVel: 0,
-                rotate: 0, rotateVel: 0
-            };
+            // Profile state
+            const profileState = { y: 0, yVel: 0 };
 
-            // Entrance observer - for smooth scroll, check visibility manually
-            if (smoothScroll.enabled) {
-                // Manual visibility check for smooth scroll (IntersectionObserver doesn't work with transform scroll)
-                function checkCardVisibility() {
-                    const viewportTop = smoothScroll.current;
-                    const viewportBottom = viewportTop + window.innerHeight;
-
-                    cardStates.forEach((state) => {
-                        const rect = state.element.getBoundingClientRect();
-                        const elementTop = smoothScroll.current + rect.top;
-                        const elementBottom = elementTop + rect.height;
-
-                        const wasVisible = state.isVisible;
-                        state.isVisible = elementBottom > viewportTop && elementTop < viewportBottom;
-
-                        // Trigger entrance animation (subtle float up)
-                        if (state.isVisible && !wasVisible && state.opacity === 0) {
-                            state.yVelocity = -1.5;
+            // Entrance observer - standard IntersectionObserver
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    const state = cardStates.find(s => s.element === entry.target);
+                    if (state) {
+                        state.isVisible = entry.isIntersecting;
+                        if (entry.isIntersecting && state.opacity === 0) {
+                            state.yVelocity = -0.8; // Gentle entrance
                         }
-                    });
-                }
+                    }
+                });
+            }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 
-                // Check visibility periodically
-                setInterval(checkCardVisibility, 100);
-                checkCardVisibility(); // Initial check
-            } else {
-                // Standard IntersectionObserver for native scroll
-                const observer = new IntersectionObserver((entries) => {
-                    entries.forEach((entry) => {
-                        const state = cardStates.find(s => s.element === entry.target);
-                        if (state) {
-                            state.isVisible = entry.isIntersecting;
-                            if (entry.isIntersecting && state.opacity === 0) {
-                                state.yVelocity = -1.5; // Subtle float up
-                            }
-                        }
-                    });
-                }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
-
-                cards.forEach(card => observer.observe(card));
-            }
+            cards.forEach(card => observer.observe(card));
 
             function updatePhysics() {
+                if (prefersReducedMotion) {
+                    // Just fade in cards without motion
+                    cardStates.forEach(state => {
+                        if (state.isVisible && state.opacity < 1) {
+                            state.opacity = Math.min(1, state.opacity + 0.05);
+                            state.element.style.opacity = state.opacity;
+                        }
+                    });
+                    requestAnimationFrame(updatePhysics);
+                    return;
+                }
+
                 const now = performance.now();
                 const dt = Math.min((now - lastTime) / 16, 3);
                 lastTime = now;
 
-                // Calculate scroll velocity (use smooth scroll position if enabled)
-                const currentScrollY = smoothScroll.enabled ? smoothScroll.current : window.scrollY;
+                // Track scroll velocity (smoothed)
+                const currentScrollY = window.scrollY;
                 const rawVelocity = currentScrollY - lastScrollY;
-                scrollVelocity = rawVelocity;
-                // The smooth scroll already lerps, so we use a tighter blend here
-                smoothScrollVelocity = smoothScroll.enabled
-                    ? smoothScrollVelocity * 0.7 + scrollVelocity * 0.3
-                    : smoothScrollVelocity * 0.85 + scrollVelocity * 0.15;
+                scrollVelocity = scrollVelocity * 0.9 + rawVelocity * 0.1;
                 lastScrollY = currentScrollY;
 
                 const time = now * 0.001;
 
-                // Update each card - subtle floating on calm water
-                cardStates.forEach((state, index) => {
+                // Update each card - like glass floating on a vast, calm lake
+                cardStates.forEach((state) => {
                     // Fade in
                     if (state.isVisible && state.opacity < 1) {
-                        state.opacity = Math.min(1, state.opacity + 0.03 * dt);
+                        state.opacity = Math.min(1, state.opacity + 0.025 * dt);
                     }
 
-                    // Very slow ambient wave (like glass floating on still water)
+                    // Extremely slow ambient wave (ocean swell)
                     const wave = Math.sin(time * state.naturalFreq + state.phase);
 
-                    // Scroll creates minimal force - just a gentle nudge
-                    const scrollForce = smoothScrollVelocity * 0.05;
+                    // Scroll creates tiny force
+                    const scrollInfluence = scrollVelocity * 0.01;
 
-                    // Spring physics for Y position (barely perceptible bob)
-                    const targetY = wave * 1.5;
-                    state.yVelocity += (targetY - state.y) * 0.008; // Very soft spring
-                    state.yVelocity += scrollForce * 0.02;
+                    // Spring physics for Y - barely moves
+                    const targetY = wave * 0.8;
+                    state.yVelocity += (targetY - state.y) * 0.003;
+                    state.yVelocity += scrollInfluence * 0.005;
                     state.yVelocity *= state.damping;
                     state.y += state.yVelocity * dt;
 
-                    // Minimal rotation - just enough to feel alive
-                    const targetRotateX = scrollForce * 0.3;
-                    state.rotateXVelocity += (targetRotateX - state.rotateX) * 0.01;
-                    state.rotateXVelocity *= state.damping;
-                    state.rotateX += state.rotateXVelocity * dt;
-
-                    // Gentle Z rotation (very subtle sway)
-                    const targetRotateZ = wave * 0.08;
-                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.01;
+                    // Minimal rotation - almost imperceptible
+                    const targetRotateZ = wave * 0.03;
+                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.002;
                     state.rotateZVelocity *= state.damping;
                     state.rotateZ += state.rotateZVelocity * dt;
 
-                    // Apply transforms - minimal rotation for tasteful movement
+                    // Apply transforms
                     state.element.style.opacity = state.opacity;
                     state.element.style.transform = `
                         translateY(${state.y}px)
-                        rotateX(${state.rotateX * 0.3}deg)
-                        rotateZ(${state.rotateZ * 0.3}deg)
+                        rotateZ(${state.rotateZ}deg)
                     `;
-
-                    // Update highlight position (subtle)
-                    state.element.style.setProperty('--highlight-x', `${-state.rotateZ * 2}%`);
-                    state.element.style.setProperty('--highlight-y', `${-state.rotateX * 1.5}%`);
                 });
 
-                // Profile floating physics - very subtle, elegant
+                // Profile - extremely subtle
                 if (profile) {
-                    const wave = Math.sin(time * 0.12); // Very slow wave
-
-                    profileState.yVel += (wave * 1.2 - profileState.y) * 0.01;
-                    profileState.yVel += smoothScrollVelocity * 0.008;
-                    profileState.yVel *= 0.97;
+                    const wave = Math.sin(time * 0.03);
+                    profileState.yVel += (wave * 0.5 - profileState.y) * 0.002;
+                    profileState.yVel *= 0.99;
                     profileState.y += profileState.yVel * dt;
-
-                    profileState.rotateVel += (wave * 0.15 + smoothScrollVelocity * 0.008 - profileState.rotate) * 0.01;
-                    profileState.rotateVel *= 0.97;
-                    profileState.rotate += profileState.rotateVel * dt;
-
-                    profile.style.transform = `
-                        translateY(${profileState.y}px)
-                        rotateZ(${profileState.rotate * 0.5}deg)
-                    `;
+                    profile.style.transform = `translateY(${profileState.y}px)`;
                 }
 
                 requestAnimationFrame(updatePhysics);
@@ -945,70 +748,20 @@
             // Start physics
             requestAnimationFrame(updatePhysics);
 
-            // Ripple effect on click
-            cards.forEach((card, index) => {
+            // Ripple effect on click (visual only, no physics ripple to other cards)
+            cards.forEach((card) => {
                 card.addEventListener('click', (e) => {
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
 
-                    // Create ripple
                     const ripple = document.createElement('span');
                     ripple.className = 'ripple';
                     ripple.style.cssText = `left:${x}px;top:${y}px;width:100px;height:100px;margin:-50px`;
                     card.appendChild(ripple);
                     setTimeout(() => ripple.remove(), 800);
-
-                    // Subtle bounce on click (gentle touch)
-                    const state = cardStates[index];
-                    state.yVelocity -= 1;
-                    state.rotateZVelocity += (Math.random() - 0.5) * 0.2;
-
-                    // Very subtle ripple to nearby cards
-                    cardStates.forEach((s, i) => {
-                        if (i !== index) {
-                            const distance = Math.abs(i - index);
-                            const strength = 0.1 / distance;
-                            setTimeout(() => {
-                                s.yVelocity -= 0.5 * strength;
-                            }, distance * 120);
-                        }
-                    });
                 });
             });
-
-            // Mouse movement adds barely perceptible force
-            let mouseX = 0, mouseY = 0;
-            document.addEventListener('mousemove', (e) => {
-                const newMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
-                const newMouseY = (e.clientY / window.innerHeight - 0.5) * 2;
-                const mouseVelX = newMouseX - mouseX;
-                const mouseVelY = newMouseY - mouseY;
-                mouseX = newMouseX;
-                mouseY = newMouseY;
-
-                cardStates.forEach((state, i) => {
-                    const influence = 0.01 / (1 + i * 0.5);
-                    state.rotateZVelocity += mouseVelX * influence;
-                    state.rotateXVelocity -= mouseVelY * influence * 0.2;
-                });
-            });
-
-            // Touch support for mobile - very subtle
-            let lastTouchY = 0;
-            document.addEventListener('touchmove', (e) => {
-                const touch = e.touches[0];
-                const touchVelY = touch.clientY - lastTouchY;
-                lastTouchY = touch.clientY;
-
-                cardStates.forEach((state) => {
-                    state.yVelocity += touchVelY * 0.005;
-                });
-            }, { passive: true });
-
-            document.addEventListener('touchstart', (e) => {
-                lastTouchY = e.touches[0].clientY;
-            }, { passive: true });
         });
     </script>
 
