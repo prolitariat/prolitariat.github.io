@@ -43,7 +43,7 @@
             position: relative;
         }
 
-        /* Deep background layer - larger, softer blobs */
+        /* Deep background layer - still opalescent depth */
         body::before {
             content: '';
             position: fixed;
@@ -57,11 +57,10 @@
                 radial-gradient(ellipse 70% 50% at 80% 90%, rgba(165, 243, 252, 0.25) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
-            animation: cloudDriftSlow 30s ease-in-out infinite;
             filter: blur(40px);
         }
 
-        /* Mid layer - medium clouds */
+        /* Mid layer - opalescent shimmer */
         body::after {
             content: '';
             position: fixed;
@@ -76,21 +75,7 @@
                 radial-gradient(ellipse 50% 35% at 15% 85%, rgba(255, 210, 230, 0.25) 0%, transparent 50%);
             pointer-events: none;
             z-index: 0;
-            animation: cloudDrift 20s ease-in-out infinite;
             filter: blur(20px);
-        }
-
-        @keyframes cloudDrift {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            25% { transform: translate(2%, 1%) scale(1.02); }
-            50% { transform: translate(-1%, 2%) scale(1); }
-            75% { transform: translate(1%, -1%) scale(1.01); }
-        }
-
-        @keyframes cloudDriftSlow {
-            0%, 100% { transform: translate(0, 0) scale(1); }
-            33% { transform: translate(-1.5%, 1%) scale(1.01); }
-            66% { transform: translate(1%, -0.5%) scale(1); }
         }
 
         main {
@@ -100,220 +85,67 @@
             perspective-origin: center top;
         }
 
-        /* Enable 3D transforms and smooth jelly animation */
+        /* Glass card scroll momentum support */
         .glass-card {
-            transform-style: preserve-3d;
-            will-change: transform, opacity;
-            backface-visibility: hidden;
-            transform-origin: center center;
-        }
-
-        .profile-ring {
             will-change: transform;
-            backface-visibility: hidden;
-            transform-origin: center center;
         }
 
-        /* Ensure inner content doesn't get distorted */
-        .glass-card > * {
-            position: relative;
-            z-index: 1;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
-        /* Glass Card - Light Mode with Enhanced Depth */
+        /* Glass Card - Elevated above the water with pronounced depth */
         .glass-card {
             background: linear-gradient(
                 145deg,
-                rgba(255, 255, 255, 0.5) 0%,
-                rgba(255, 255, 255, 0.35) 50%,
-                rgba(255, 255, 255, 0.45) 100%
+                rgba(255, 255, 255, 0.55) 0%,
+                rgba(255, 255, 255, 0.4) 50%,
+                rgba(255, 255, 255, 0.5) 100%
             );
             backdrop-filter: blur(24px) saturate(150%);
             -webkit-backdrop-filter: blur(24px) saturate(150%);
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.7);
             box-shadow:
-                0 1px 1px rgba(255, 255, 255, 0.8),
-                0 2px 4px rgba(0, 0, 0, 0.02),
-                0 4px 8px rgba(0, 0, 0, 0.02),
-                0 8px 16px rgba(0, 0, 0, 0.03),
-                0 16px 32px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.02);
-            position: relative;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        /* Top highlight reflection - moves with tilt */
-        .glass-card {
-            --highlight-x: 0%;
-            --highlight-y: 0%;
-        }
-
-        .glass-card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(
-                ellipse 50% 40% at calc(50% + var(--highlight-x)) calc(30% + var(--highlight-y)),
-                rgba(255, 255, 255, 0.25) 0%,
-                rgba(255, 255, 255, 0.1) 30%,
-                transparent 60%
-            );
-            border-radius: inherit;
-            pointer-events: none;
-            transform-origin: center center;
-        }
-
-        /* Caustic light effect */
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(ellipse 30% 20% at 20% 80%, rgba(150, 220, 255, 0.08) 0%, transparent 50%),
-                radial-gradient(ellipse 25% 15% at 80% 70%, rgba(200, 180, 255, 0.06) 0%, transparent 50%);
-            border-radius: inherit;
-            pointer-events: none;
-            opacity: 0.8;
-            animation: causticShift 8s ease-in-out infinite;
-        }
-
-        @keyframes causticShift {
-            0%, 100% {
-                background-position: 0% 0%, 100% 100%;
-                opacity: 0.6;
-            }
-            50% {
-                background-position: 10% 10%, 90% 90%;
-                opacity: 0.9;
-            }
-        }
-
-        .glass-card:hover {
-            background: linear-gradient(
-                145deg,
-                rgba(255, 255, 255, 0.6) 0%,
-                rgba(255, 255, 255, 0.45) 50%,
-                rgba(255, 255, 255, 0.55) 100%
-            );
-            box-shadow:
-                0 1px 1px rgba(255, 255, 255, 0.9),
+                /* Top edge highlight */
+                0 -1px 0 rgba(255, 255, 255, 0.8),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8),
+                /* Layered depth shadows - floating high above */
                 0 2px 4px rgba(0, 0, 0, 0.02),
                 0 4px 8px rgba(0, 0, 0, 0.03),
                 0 8px 16px rgba(0, 0, 0, 0.04),
-                0 20px 40px rgba(0, 0, 0, 0.06),
-                0 32px 64px rgba(0, 0, 0, 0.04),
-                inset 0 1px 0 rgba(255, 255, 255, 0.7),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.02);
-            transform: translateY(-4px);
-        }
-
-        .glass-card:active {
-            transform: scale(0.985) translateY(0);
-            transition: all 0.1s ease;
-        }
-
-        /* Water ripple on click */
-        .glass-card .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle,
-                rgba(255, 255, 255, 0.4) 0%,
-                rgba(255, 255, 255, 0.2) 40%,
-                transparent 70%
-            );
-            transform: scale(0);
-            animation: rippleEffect 0.8s ease-out forwards;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        @keyframes rippleEffect {
-            0% {
-                transform: scale(0);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-
-        /* Cards are visible immediately */
-        .glass-card {
-            opacity: 1;
-        }
-
-        /* Glass Pills */
-        .glass-pill {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            cursor: default;
+                0 16px 32px rgba(0, 0, 0, 0.05),
+                0 32px 64px rgba(0, 0, 0, 0.06),
+                0 48px 96px rgba(0, 0, 0, 0.04);
             position: relative;
-            overflow: hidden;
         }
 
-        .glass-pill::before {
+        /* Subtle top highlight reflection */
+        .glass-card::after {
             content: '';
             position: absolute;
-            inset: 0;
-            padding: 1px;
-            border-radius: inherit;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
             background: linear-gradient(
-                90deg,
-                rgba(255, 255, 255, 0.3),
-                rgba(255, 200, 200, 0.4),
-                rgba(255, 230, 150, 0.4),
-                rgba(200, 255, 200, 0.4),
-                rgba(150, 220, 255, 0.4),
-                rgba(200, 180, 255, 0.4),
-                rgba(255, 180, 220, 0.4),
-                rgba(255, 255, 255, 0.3)
+                to bottom,
+                rgba(255, 255, 255, 0.2) 0%,
+                transparent 100%
             );
-            background-size: 300% 100%;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            border-radius: inherit;
+            pointer-events: none;
         }
 
-        .glass-pill:hover::before {
-            opacity: 1;
-            animation: shimmerBorder 2s linear infinite;
-        }
-
-        @keyframes shimmerBorder {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 300% 50%; }
-        }
-
-        .glass-pill:hover {
-            background: rgba(255, 255, 255, 0.65);
-            transform: translateY(-4px) scale(1.02);
+        /* Glass Pills - static, elevated */
+        .glass-pill {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow:
-                0 8px 24px rgba(0, 0, 0, 0.08),
-                0 0 20px rgba(200, 180, 255, 0.15),
-                0 0 40px rgba(150, 220, 255, 0.1);
+                0 2px 4px rgba(0, 0, 0, 0.03),
+                0 4px 8px rgba(0, 0, 0, 0.04),
+                0 8px 16px rgba(0, 0, 0, 0.03);
+            cursor: default;
         }
 
-        .glass-pill:active {
-            transform: scale(0.95);
-            transition: all 0.1s ease;
-        }
-
-        /* Liquid Glass Profile Ring - Light Mode */
+        /* Liquid Glass Profile Ring - Static, elevated */
         .profile-ring {
             position: relative;
             padding: 4px;
@@ -332,20 +164,9 @@
                 0 16px 32px rgba(0, 0, 0, 0.05),
                 inset 0 1px 0 rgba(255, 255, 255, 0.7);
             border: 1px solid rgba(255, 255, 255, 0.6);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
         }
 
-        .profile-ring:hover {
-            transform: scale(1.03) translateY(-3px);
-            box-shadow:
-                0 1px 1px rgba(255, 255, 255, 0.9),
-                0 8px 16px rgba(0, 0, 0, 0.06),
-                0 16px 32px rgba(0, 0, 0, 0.06),
-                0 24px 48px rgba(0, 0, 0, 0.05),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-        }
-
-        /* Contact Links - Light Mode */
+        /* Contact Links - Static, elevated */
         .contact-link {
             background: linear-gradient(
                 145deg,
@@ -359,29 +180,8 @@
                 0 1px 1px rgba(255, 255, 255, 0.6),
                 0 2px 4px rgba(0, 0, 0, 0.02),
                 0 4px 8px rgba(0, 0, 0, 0.03),
-                inset 0 1px 0 rgba(255, 255, 255, 0.5);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .contact-link:hover {
-            background: linear-gradient(
-                145deg,
-                rgba(255, 255, 255, 0.65) 0%,
-                rgba(255, 255, 255, 0.5) 100%
-            );
-            border-color: rgba(255, 255, 255, 0.7);
-            transform: translateY(-4px) scale(1.02);
-            box-shadow:
-                0 1px 1px rgba(255, 255, 255, 0.8),
-                0 4px 8px rgba(0, 0, 0, 0.03),
                 0 8px 16px rgba(0, 0, 0, 0.04),
-                0 16px 32px rgba(0, 0, 0, 0.05),
-                inset 0 1px 0 rgba(255, 255, 255, 0.6);
-        }
-
-        .contact-link:active {
-            transform: scale(0.95);
-            transition: all 0.1s ease;
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         /* Charter Typography - Crystal Clear */
