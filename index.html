@@ -784,20 +784,21 @@
             }
 
             // Floating water physics state for each card
+            // Tuned for subtle, tasteful movement - NOT jelly/rapid wobble
             const cardStates = Array.from(cards).map((card, i) => ({
                 element: card,
-                // Position (gentle floating)
+                // Position (very gentle floating)
                 y: 0,
                 yVelocity: 0,
-                // Rotation (subtle tilt)
+                // Rotation (barely perceptible tilt)
                 rotateX: 0,
                 rotateZ: 0,
                 rotateXVelocity: 0,
                 rotateZVelocity: 0,
                 // Card-specific properties
-                phase: i * 0.8,
-                naturalFreq: 0.5 + (i * 0.1), // Slower, more gentle wobble
-                damping: 0.92, // Higher damping = smoother settling
+                phase: i * 1.2,
+                naturalFreq: 0.15 + (i * 0.02), // Very slow, calm wave
+                damping: 0.97, // High damping = slow, graceful settling
                 // Track visibility
                 isVisible: false,
                 opacity: 0
@@ -830,9 +831,9 @@
                         const wasVisible = state.isVisible;
                         state.isVisible = elementBottom > viewportTop && elementTop < viewportBottom;
 
-                        // Trigger entrance animation (gentle float up)
+                        // Trigger entrance animation (subtle float up)
                         if (state.isVisible && !wasVisible && state.opacity === 0) {
-                            state.yVelocity = -4;
+                            state.yVelocity = -1.5;
                         }
                     });
                 }
@@ -848,7 +849,7 @@
                         if (state) {
                             state.isVisible = entry.isIntersecting;
                             if (entry.isIntersecting && state.opacity === 0) {
-                                state.yVelocity = -4; // Gentle float up
+                                state.yVelocity = -1.5; // Subtle float up
                             }
                         }
                     });
@@ -874,70 +875,67 @@
 
                 const time = now * 0.001;
 
-                // Update each card
+                // Update each card - subtle floating on calm water
                 cardStates.forEach((state, index) => {
                     // Fade in
                     if (state.isVisible && state.opacity < 1) {
                         state.opacity = Math.min(1, state.opacity + 0.03 * dt);
                     }
 
-                    // Gentle ambient floating wave (like floating on calm water)
+                    // Very slow ambient wave (like glass floating on still water)
                     const wave = Math.sin(time * state.naturalFreq + state.phase);
-                    const wave2 = Math.sin(time * state.naturalFreq * 0.6 + state.phase * 1.2);
 
-                    // Scroll creates gentle force (reduced for subtlety)
-                    const scrollForce = smoothScrollVelocity * 0.2;
-                    const scrollTilt = smoothScrollVelocity * 0.06;
+                    // Scroll creates minimal force - just a gentle nudge
+                    const scrollForce = smoothScrollVelocity * 0.05;
 
-                    // Spring physics for Y position (gentle bobbing)
-                    const targetY = wave * 2;
-                    state.yVelocity += (targetY - state.y) * 0.03;
-                    state.yVelocity += scrollForce * 0.08;
+                    // Spring physics for Y position (barely perceptible bob)
+                    const targetY = wave * 1.5;
+                    state.yVelocity += (targetY - state.y) * 0.008; // Very soft spring
+                    state.yVelocity += scrollForce * 0.02;
                     state.yVelocity *= state.damping;
                     state.y += state.yVelocity * dt;
 
-                    // Spring physics for X rotation (very subtle tilt on scroll)
-                    const targetRotateX = scrollTilt + wave2 * 0.15;
-                    state.rotateXVelocity += (targetRotateX - state.rotateX) * 0.04;
+                    // Minimal rotation - just enough to feel alive
+                    const targetRotateX = scrollForce * 0.3;
+                    state.rotateXVelocity += (targetRotateX - state.rotateX) * 0.01;
                     state.rotateXVelocity *= state.damping;
                     state.rotateX += state.rotateXVelocity * dt;
 
-                    // Spring physics for Z rotation (gentle sway)
-                    const targetRotateZ = wave * 0.2 + scrollTilt * 0.02;
-                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.04;
+                    // Gentle Z rotation (very subtle sway)
+                    const targetRotateZ = wave * 0.08;
+                    state.rotateZVelocity += (targetRotateZ - state.rotateZ) * 0.01;
                     state.rotateZVelocity *= state.damping;
                     state.rotateZ += state.rotateZVelocity * dt;
 
-                    // Apply transforms (no scale deformation - keeps typography crisp)
+                    // Apply transforms - minimal rotation for tasteful movement
                     state.element.style.opacity = state.opacity;
                     state.element.style.transform = `
                         translateY(${state.y}px)
-                        rotateX(${state.rotateX * 0.5}deg)
-                        rotateZ(${state.rotateZ * 0.5}deg)
+                        rotateX(${state.rotateX * 0.3}deg)
+                        rotateZ(${state.rotateZ * 0.3}deg)
                     `;
 
-                    // Update highlight position
-                    state.element.style.setProperty('--highlight-x', `${-state.rotateZ * 5}%`);
-                    state.element.style.setProperty('--highlight-y', `${-state.rotateX * 3}%`);
+                    // Update highlight position (subtle)
+                    state.element.style.setProperty('--highlight-x', `${-state.rotateZ * 2}%`);
+                    state.element.style.setProperty('--highlight-y', `${-state.rotateX * 1.5}%`);
                 });
 
-                // Profile floating physics (gentle, no distortion)
+                // Profile floating physics - very subtle, elegant
                 if (profile) {
-                    const wave = Math.sin(time * 0.4);
-                    const wave2 = Math.cos(time * 0.25);
+                    const wave = Math.sin(time * 0.12); // Very slow wave
 
-                    profileState.yVel += (wave * 2 - profileState.y) * 0.04;
-                    profileState.yVel += smoothScrollVelocity * 0.03;
-                    profileState.yVel *= 0.92;
+                    profileState.yVel += (wave * 1.2 - profileState.y) * 0.01;
+                    profileState.yVel += smoothScrollVelocity * 0.008;
+                    profileState.yVel *= 0.97;
                     profileState.y += profileState.yVel * dt;
 
-                    profileState.rotateVel += (wave2 * 0.5 + smoothScrollVelocity * 0.03 - profileState.rotate) * 0.04;
-                    profileState.rotateVel *= 0.9;
+                    profileState.rotateVel += (wave * 0.15 + smoothScrollVelocity * 0.008 - profileState.rotate) * 0.01;
+                    profileState.rotateVel *= 0.97;
                     profileState.rotate += profileState.rotateVel * dt;
 
                     profile.style.transform = `
                         translateY(${profileState.y}px)
-                        rotateZ(${profileState.rotate}deg)
+                        rotateZ(${profileState.rotate * 0.5}deg)
                     `;
                 }
 
@@ -961,25 +959,25 @@
                     card.appendChild(ripple);
                     setTimeout(() => ripple.remove(), 800);
 
-                    // Gentle bounce on click (like tapping water surface)
+                    // Subtle bounce on click (gentle touch)
                     const state = cardStates[index];
-                    state.yVelocity -= 3;
-                    state.rotateZVelocity += (Math.random() - 0.5) * 0.8;
+                    state.yVelocity -= 1;
+                    state.rotateZVelocity += (Math.random() - 0.5) * 0.2;
 
-                    // Gentle ripple to nearby cards
+                    // Very subtle ripple to nearby cards
                     cardStates.forEach((s, i) => {
                         if (i !== index) {
                             const distance = Math.abs(i - index);
-                            const strength = 0.3 / distance;
+                            const strength = 0.1 / distance;
                             setTimeout(() => {
-                                s.yVelocity -= 1.5 * strength;
-                            }, distance * 80);
+                                s.yVelocity -= 0.5 * strength;
+                            }, distance * 120);
                         }
                     });
                 });
             });
 
-            // Mouse movement adds very subtle force
+            // Mouse movement adds barely perceptible force
             let mouseX = 0, mouseY = 0;
             document.addEventListener('mousemove', (e) => {
                 const newMouseX = (e.clientX / window.innerWidth - 0.5) * 2;
@@ -990,13 +988,13 @@
                 mouseY = newMouseY;
 
                 cardStates.forEach((state, i) => {
-                    const influence = 0.05 / (1 + i * 0.3);
+                    const influence = 0.01 / (1 + i * 0.5);
                     state.rotateZVelocity += mouseVelX * influence;
-                    state.rotateXVelocity -= mouseVelY * influence * 0.3;
+                    state.rotateXVelocity -= mouseVelY * influence * 0.2;
                 });
             });
 
-            // Touch support for mobile
+            // Touch support for mobile - very subtle
             let lastTouchY = 0;
             document.addEventListener('touchmove', (e) => {
                 const touch = e.touches[0];
@@ -1004,7 +1002,7 @@
                 lastTouchY = touch.clientY;
 
                 cardStates.forEach((state) => {
-                    state.yVelocity += touchVelY * 0.02;
+                    state.yVelocity += touchVelY * 0.005;
                 });
             }, { passive: true });
 
