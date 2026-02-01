@@ -433,6 +433,342 @@
             z-index: 1002;
         }
 
+        /* ========== Glass Bead Menu System ========== */
+
+        .glass-menu-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 1000;
+        }
+
+        .glass-menu {
+            position: absolute;
+            bottom: 56px;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            transform: translateY(10px) scale(0.95);
+            pointer-events: none;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-menu.open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .glass-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+            box-shadow:
+                0 4px 12px rgba(0, 0, 0, 0.08),
+                0 2px 4px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            transition: all 0.15s ease;
+        }
+
+        .glass-menu-item:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateX(-4px);
+            box-shadow:
+                0 6px 16px rgba(0, 0, 0, 0.1),
+                0 2px 4px rgba(0, 0, 0, 0.04),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .glass-menu-item svg {
+            width: 18px;
+            height: 18px;
+            opacity: 0.7;
+        }
+
+        /* ========== Analytics Dashboard ========== */
+
+        .analytics-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .analytics-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .analytics-dashboard {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            width: 90%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 2001;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .analytics-overlay.active .analytics-dashboard {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        /* Multi-depth glassmorphism layers */
+        .analytics-dashboard-outer {
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.08) 100%
+            );
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 24px;
+            padding: 8px;
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.12),
+                0 16px 48px rgba(0, 0, 0, 0.08),
+                0 32px 96px rgba(0, 0, 0, 0.06);
+        }
+
+        .analytics-dashboard-inner {
+            background: linear-gradient(
+                145deg,
+                rgba(255, 255, 255, 0.75) 0%,
+                rgba(255, 255, 255, 0.6) 50%,
+                rgba(255, 255, 255, 0.7) 100%
+            );
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 -1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .analytics-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0a0a0a;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .analytics-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .analytics-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.05);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s ease;
+        }
+
+        .analytics-close:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-close svg {
+            width: 18px;
+            height: 18px;
+            color: #6b7280;
+        }
+
+        /* Analytics Sections */
+        .analytics-section {
+            margin-bottom: 28px;
+        }
+
+        .analytics-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .analytics-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 16px;
+        }
+
+        /* Visitor Info Grid */
+        .visitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .visitor-card {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .visitor-card-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        .visitor-card-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            word-break: break-all;
+        }
+
+        /* Click Events Table */
+        .events-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .events-table th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.02);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .events-table th:first-child {
+            border-radius: 8px 0 0 0;
+        }
+
+        .events-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        .events-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #374151;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .events-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .events-table tr:hover td {
+            background: rgba(99, 102, 241, 0.04);
+        }
+
+        .event-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+            font-size: 12px;
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        .event-count {
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+        .no-events {
+            text-align: center;
+            padding: 32px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        /* Session Stats */
+        .session-stats {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .session-stat {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .session-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4f46e5;
+            letter-spacing: -0.02em;
+        }
+
+        .session-stat-label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        /* Hide menu container when tour or analytics is active */
+        .tour-active .glass-menu-container,
+        .analytics-active .glass-menu-container {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Trackable elements get subtle interaction cue */
+        [data-track]:hover {
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body class="font-charter text-gray-800 antialiased">
@@ -559,28 +895,28 @@
             </p>
 
             <div class="flex flex-wrap gap-3">
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Product Strategy">
                     Product Strategy
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Product Analytics">
                     Product Analytics
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="In-App Experiences">
                     In-App Experiences
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Data Visualization">
                     Data Visualization
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="User Research">
                     User Research
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Observability">
                     Observability
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Enterprise Software">
                     Enterprise Software
                 </span>
-                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900">
+                <span class="glass-pill px-4 py-2 rounded-full text-sm font-medium text-gray-900" data-track="skill" data-track-value="Cross-functional Leadership">
                     Cross-functional Leadership
                 </span>
             </div>
@@ -597,7 +933,8 @@
 
             <div class="flex flex-wrap gap-4">
                 <a href="mailto:noskoviak@gmail.com"
-                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium">
+                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium"
+                   data-track="contact" data-track-value="Email">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="20" height="16" x="2" y="4" rx="2"/>
                         <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
@@ -607,7 +944,8 @@
                 <a href="https://linkedin.com/in/bnoskoviak"
                    target="_blank"
                    rel="noopener noreferrer"
-                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium">
+                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium"
+                   data-track="contact" data-track-value="LinkedIn">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
                         <rect width="4" height="12" x="2" y="9"/>
@@ -618,7 +956,8 @@
                 <a href="https://github.com/prolitariat"
                    target="_blank"
                    rel="noopener noreferrer"
-                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium">
+                   class="contact-link inline-flex items-center gap-3 px-6 py-3 rounded-md text-gray-900 font-medium"
+                   data-track="contact" data-track-value="GitHub">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
                         <path d="M9 18c-4.51 2-5-2-7-2"/>
@@ -637,14 +976,78 @@
 
     </main>
 
-    <!-- Tour Trigger Button -->
-    <button class="tour-trigger" id="tourTrigger" aria-label="Take a tour of this page">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <path d="M12 17h.01"/>
-        </svg>
-    </button>
+    <!-- Glass Bead Menu -->
+    <div class="glass-menu-container" id="menuContainer">
+        <div class="glass-menu" id="glassMenu">
+            <button class="glass-menu-item" id="menuAnalytics">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18"/>
+                    <path d="m19 9-5 5-4-4-3 3"/>
+                </svg>
+                View Analytics
+            </button>
+            <button class="glass-menu-item" id="menuTour">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <path d="M12 17h.01"/>
+                </svg>
+                Take the Tour
+            </button>
+        </div>
+        <button class="tour-trigger" id="menuTrigger" aria-label="Open menu">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                <path d="M12 17h.01"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Analytics Dashboard Overlay -->
+    <div class="analytics-overlay" id="analyticsOverlay">
+        <div class="analytics-dashboard">
+            <div class="analytics-dashboard-outer">
+                <div class="analytics-dashboard-inner">
+                    <div class="analytics-header">
+                        <div>
+                            <h2 class="analytics-title">Session Analytics</h2>
+                            <p class="analytics-subtitle">Real-time visitor data & interaction tracking</p>
+                        </div>
+                        <button class="analytics-close" id="analyticsClose" aria-label="Close analytics">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Session Overview -->
+                    <div class="analytics-section">
+                        <h3 class="analytics-section-title">Session Overview</h3>
+                        <div class="session-stats" id="sessionStats">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Visitor Information -->
+                    <div class="analytics-section">
+                        <h3 class="analytics-section-title">Visitor Information</h3>
+                        <div class="visitor-grid" id="visitorGrid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Click Events -->
+                    <div class="analytics-section">
+                        <h3 class="analytics-section-title">Click Events</h3>
+                        <div id="clickEventsContainer">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Tour Overlay -->
     <div class="tour-overlay" id="tourOverlay">
@@ -891,7 +1294,6 @@
         }
 
         // Event listeners
-        trigger.addEventListener('click', startTour);
         closeBtn.addEventListener('click', endTour);
         nextBtn.addEventListener('click', nextStep);
         prevBtn.addEventListener('click', prevStep);
@@ -922,6 +1324,272 @@
                 showStep(currentStep);
             }
         });
+
+        // ========== Analytics & Menu System ==========
+
+        // Initialize analytics data
+        const analyticsData = {
+            sessionStart: Date.now(),
+            pageViews: 1,
+            clicks: [],
+            visitor: {}
+        };
+
+        // Harvest visitor metadata
+        function harvestVisitorData() {
+            const nav = navigator;
+            const screen = window.screen;
+            const loc = window.location;
+
+            analyticsData.visitor = {
+                // Browser & System
+                userAgent: nav.userAgent,
+                platform: nav.platform || 'Unknown',
+                language: nav.language || nav.userLanguage || 'Unknown',
+                languages: nav.languages ? nav.languages.join(', ') : nav.language,
+                cookiesEnabled: nav.cookieEnabled,
+                doNotTrack: nav.doNotTrack === '1' ? 'Enabled' : 'Disabled',
+
+                // Screen & Display
+                screenResolution: `${screen.width} × ${screen.height}`,
+                colorDepth: `${screen.colorDepth}-bit`,
+                pixelRatio: window.devicePixelRatio || 1,
+                viewportSize: `${window.innerWidth} × ${window.innerHeight}`,
+
+                // Time & Location
+                timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                timezoneOffset: `UTC${new Date().getTimezoneOffset() > 0 ? '-' : '+'}${Math.abs(new Date().getTimezoneOffset() / 60)}`,
+                localTime: new Date().toLocaleString(),
+
+                // Connection (if available)
+                connectionType: nav.connection ? nav.connection.effectiveType : 'Unknown',
+
+                // Referrer & URL
+                referrer: document.referrer || 'Direct',
+                currentURL: loc.href,
+                hostname: loc.hostname,
+                pathname: loc.pathname,
+
+                // Device Detection
+                deviceType: /Mobile|Android|iPhone|iPad/.test(nav.userAgent) ? 'Mobile' : 'Desktop',
+                touchEnabled: 'ontouchstart' in window || nav.maxTouchPoints > 0,
+
+                // Memory (Chrome only)
+                deviceMemory: nav.deviceMemory ? `${nav.deviceMemory} GB` : 'Unknown',
+                hardwareConcurrency: nav.hardwareConcurrency || 'Unknown',
+
+                // Online Status
+                onlineStatus: nav.onLine ? 'Online' : 'Offline'
+            };
+
+            // Try to detect browser name
+            const ua = nav.userAgent;
+            let browserName = 'Unknown';
+            if (ua.indexOf('Firefox') > -1) browserName = 'Firefox';
+            else if (ua.indexOf('Opera') > -1 || ua.indexOf('OPR') > -1) browserName = 'Opera';
+            else if (ua.indexOf('Edge') > -1 || ua.indexOf('Edg') > -1) browserName = 'Edge';
+            else if (ua.indexOf('Chrome') > -1) browserName = 'Chrome';
+            else if (ua.indexOf('Safari') > -1) browserName = 'Safari';
+            analyticsData.visitor.browser = browserName;
+        }
+
+        // Track click events
+        function trackClick(category, value) {
+            analyticsData.clicks.push({
+                category,
+                value,
+                timestamp: Date.now(),
+                time: new Date().toLocaleTimeString()
+            });
+        }
+
+        // Set up click tracking on trackable elements
+        function setupClickTracking() {
+            document.querySelectorAll('[data-track]').forEach(el => {
+                el.addEventListener('click', () => {
+                    const category = el.dataset.track;
+                    const value = el.dataset.trackValue;
+                    trackClick(category, value);
+                });
+            });
+        }
+
+        // Menu functionality
+        const menuContainer = document.getElementById('menuContainer');
+        const menuTrigger = document.getElementById('menuTrigger');
+        const glassMenu = document.getElementById('glassMenu');
+        const menuTour = document.getElementById('menuTour');
+        const menuAnalytics = document.getElementById('menuAnalytics');
+        let menuOpen = false;
+
+        function toggleMenu() {
+            menuOpen = !menuOpen;
+            glassMenu.classList.toggle('open', menuOpen);
+        }
+
+        function closeMenu() {
+            menuOpen = false;
+            glassMenu.classList.remove('open');
+        }
+
+        menuTrigger.addEventListener('click', toggleMenu);
+
+        menuTour.addEventListener('click', () => {
+            closeMenu();
+            startTour();
+        });
+
+        // Analytics Dashboard
+        const analyticsOverlay = document.getElementById('analyticsOverlay');
+        const analyticsClose = document.getElementById('analyticsClose');
+
+        function openAnalytics() {
+            closeMenu();
+            document.body.classList.add('analytics-active');
+            analyticsOverlay.classList.add('active');
+            renderAnalytics();
+        }
+
+        function closeAnalytics() {
+            document.body.classList.remove('analytics-active');
+            analyticsOverlay.classList.remove('active');
+        }
+
+        function renderAnalytics() {
+            // Session stats
+            const sessionDuration = Math.floor((Date.now() - analyticsData.sessionStart) / 1000);
+            const minutes = Math.floor(sessionDuration / 60);
+            const seconds = sessionDuration % 60;
+            const totalClicks = analyticsData.clicks.length;
+
+            document.getElementById('sessionStats').innerHTML = `
+                <div class="session-stat">
+                    <span class="session-stat-value">${minutes}:${seconds.toString().padStart(2, '0')}</span>
+                    <span class="session-stat-label">Session Duration</span>
+                </div>
+                <div class="session-stat">
+                    <span class="session-stat-value">${totalClicks}</span>
+                    <span class="session-stat-label">Total Clicks</span>
+                </div>
+                <div class="session-stat">
+                    <span class="session-stat-value">${analyticsData.pageViews}</span>
+                    <span class="session-stat-label">Page Views</span>
+                </div>
+            `;
+
+            // Visitor info
+            const v = analyticsData.visitor;
+            const visitorCards = [
+                { label: 'Browser', value: v.browser },
+                { label: 'Device Type', value: v.deviceType },
+                { label: 'Platform', value: v.platform },
+                { label: 'Language', value: v.language },
+                { label: 'Languages', value: v.languages },
+                { label: 'Timezone', value: v.timezone },
+                { label: 'UTC Offset', value: v.timezoneOffset },
+                { label: 'Local Time', value: v.localTime },
+                { label: 'Screen Resolution', value: v.screenResolution },
+                { label: 'Viewport Size', value: v.viewportSize },
+                { label: 'Pixel Ratio', value: `${v.pixelRatio}x` },
+                { label: 'Color Depth', value: v.colorDepth },
+                { label: 'Referrer', value: v.referrer },
+                { label: 'Connection', value: v.connectionType },
+                { label: 'Touch Enabled', value: v.touchEnabled ? 'Yes' : 'No' },
+                { label: 'Cookies', value: v.cookiesEnabled ? 'Enabled' : 'Disabled' },
+                { label: 'Do Not Track', value: v.doNotTrack },
+                { label: 'Online Status', value: v.onlineStatus },
+                { label: 'CPU Cores', value: v.hardwareConcurrency },
+                { label: 'Device Memory', value: v.deviceMemory }
+            ];
+
+            document.getElementById('visitorGrid').innerHTML = visitorCards
+                .filter(card => card.value && card.value !== 'Unknown')
+                .map(card => `
+                    <div class="visitor-card">
+                        <div class="visitor-card-label">${card.label}</div>
+                        <div class="visitor-card-value">${card.value}</div>
+                    </div>
+                `).join('');
+
+            // Click events
+            const clicksContainer = document.getElementById('clickEventsContainer');
+            if (analyticsData.clicks.length === 0) {
+                clicksContainer.innerHTML = '<div class="no-events">No click events recorded yet. Try clicking on contact links or expertise pills!</div>';
+            } else {
+                // Aggregate clicks by value
+                const aggregated = {};
+                analyticsData.clicks.forEach(click => {
+                    const key = `${click.category}:${click.value}`;
+                    if (!aggregated[key]) {
+                        aggregated[key] = { category: click.category, value: click.value, count: 0, lastClick: click.time };
+                    }
+                    aggregated[key].count++;
+                    aggregated[key].lastClick = click.time;
+                });
+
+                clicksContainer.innerHTML = `
+                    <table class="events-table">
+                        <thead>
+                            <tr>
+                                <th>Element</th>
+                                <th>Category</th>
+                                <th>Clicks</th>
+                                <th>Last Click</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${Object.values(aggregated).map(event => `
+                                <tr>
+                                    <td>${event.value}</td>
+                                    <td><span class="event-badge">${event.category}</span></td>
+                                    <td class="event-count">${event.count}</td>
+                                    <td>${event.lastClick}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            }
+        }
+
+        menuAnalytics.addEventListener('click', openAnalytics);
+        analyticsClose.addEventListener('click', closeAnalytics);
+
+        // Close analytics on overlay click
+        analyticsOverlay.addEventListener('click', (e) => {
+            if (e.target === analyticsOverlay) {
+                closeAnalytics();
+            }
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (menuOpen && !menuContainer.contains(e.target)) {
+                closeMenu();
+            }
+        });
+
+        // Escape key closes analytics or menu
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                if (analyticsOverlay.classList.contains('active')) {
+                    closeAnalytics();
+                } else if (menuOpen) {
+                    closeMenu();
+                }
+            }
+        });
+
+        // Initialize on load
+        harvestVisitorData();
+        setupClickTracking();
+
+        // Update analytics every second when dashboard is open
+        setInterval(() => {
+            if (analyticsOverlay.classList.contains('active')) {
+                renderAnalytics();
+            }
+        }, 1000);
     </script>
 
 </body>
