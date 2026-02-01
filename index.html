@@ -769,6 +769,96 @@
             cursor: pointer;
         }
 
+        /* Historical Stats - distinguished styling */
+        .historical-section {
+            background: linear-gradient(
+                145deg,
+                rgba(99, 102, 241, 0.08) 0%,
+                rgba(99, 102, 241, 0.03) 100%
+            );
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 8px;
+        }
+
+        .historical-stats {
+            display: flex;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .historical-stat {
+            text-align: center;
+        }
+
+        .historical-stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #4f46e5;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .historical-stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .historical-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(99, 102, 241, 0.15);
+            color: #4f46e5;
+            font-size: 10px;
+            font-weight: 600;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 16px;
+        }
+
+        .historical-clicks-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .historical-click-card {
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .historical-click-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .historical-click-count {
+            font-size: 24px;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .historical-click-category {
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.08), transparent);
+            margin: 28px 0;
+        }
+
     </style>
 </head>
 <body class="font-charter text-gray-800 antialiased">
@@ -1039,9 +1129,38 @@
 
                     <!-- Click Events -->
                     <div class="analytics-section">
-                        <h3 class="analytics-section-title">Click Events</h3>
+                        <h3 class="analytics-section-title">Session Click Events</h3>
                         <div id="clickEventsContainer">
                             <!-- Populated by JS -->
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- Historical Data Header -->
+                    <div class="analytics-section">
+                        <span class="historical-badge">All-Time Data</span>
+                        <h3 class="analytics-section-title" style="margin-bottom: 0;">Historical Analytics</h3>
+                        <p style="font-size: 13px; color: #6b7280; margin-top: 4px;">Aggregated across all visitors (stored locally)</p>
+                    </div>
+
+                    <!-- Historical Visitors -->
+                    <div class="analytics-section">
+                        <h3 class="analytics-section-title">Total Visitors</h3>
+                        <div class="historical-section">
+                            <div class="historical-stats" id="historicalVisitors">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Historical Clicks -->
+                    <div class="analytics-section">
+                        <h3 class="analytics-section-title">All-Time Click Totals</h3>
+                        <div class="historical-section">
+                            <div id="historicalClicks">
+                                <!-- Populated by JS -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1335,6 +1454,74 @@
             visitor: {}
         };
 
+        // ========== Historical Data (localStorage) ==========
+        const STORAGE_KEYS = {
+            visitors: 'portfolio_total_visitors',
+            clicks: 'portfolio_click_totals',
+            sessionId: 'portfolio_session_id'
+        };
+
+        // Generate unique session ID
+        function generateSessionId() {
+            return 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // Get or create session ID and track visitor
+        function initializeSession() {
+            let sessionId = sessionStorage.getItem(STORAGE_KEYS.sessionId);
+
+            if (!sessionId) {
+                // New session - generate ID and increment visitor count
+                sessionId = generateSessionId();
+                sessionStorage.setItem(STORAGE_KEYS.sessionId, sessionId);
+
+                // Increment total visitors
+                const currentVisitors = parseInt(localStorage.getItem(STORAGE_KEYS.visitors) || '0');
+                localStorage.setItem(STORAGE_KEYS.visitors, (currentVisitors + 1).toString());
+            }
+
+            return sessionId;
+        }
+
+        // Get historical click totals
+        function getHistoricalClicks() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEYS.clicks);
+                return stored ? JSON.parse(stored) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        // Save click to historical totals
+        function saveClickToHistory(category, value) {
+            const historicalClicks = getHistoricalClicks();
+            const key = `${category}:${value}`;
+
+            if (!historicalClicks[key]) {
+                historicalClicks[key] = {
+                    category,
+                    value,
+                    count: 0
+                };
+            }
+            historicalClicks[key].count++;
+
+            try {
+                localStorage.setItem(STORAGE_KEYS.clicks, JSON.stringify(historicalClicks));
+            } catch (e) {
+                console.warn('Could not save click to localStorage');
+            }
+        }
+
+        // Get total visitors
+        function getTotalVisitors() {
+            return parseInt(localStorage.getItem(STORAGE_KEYS.visitors) || '0');
+        }
+
+        // Initialize session tracking
+        const currentSessionId = initializeSession();
+
         // Harvest visitor metadata
         function harvestVisitorData() {
             const nav = navigator;
@@ -1395,12 +1582,16 @@
 
         // Track click events
         function trackClick(category, value) {
+            // Track in current session
             analyticsData.clicks.push({
                 category,
                 value,
                 timestamp: Date.now(),
                 time: new Date().toLocaleTimeString()
             });
+
+            // Persist to historical data
+            saveClickToHistory(category, value);
         }
 
         // Set up click tracking on trackable elements
@@ -1548,6 +1739,54 @@
                             `).join('')}
                         </tbody>
                     </table>
+                `;
+            }
+
+            // Render historical data
+            renderHistoricalData();
+        }
+
+        // Render historical analytics
+        function renderHistoricalData() {
+            // Total visitors
+            const totalVisitors = getTotalVisitors();
+            const historicalVisitorsEl = document.getElementById('historicalVisitors');
+
+            historicalVisitorsEl.innerHTML = `
+                <div class="historical-stat">
+                    <div class="historical-stat-value">${totalVisitors}</div>
+                    <div class="historical-stat-label">Unique Sessions</div>
+                </div>
+            `;
+
+            // Historical click totals
+            const historicalClicks = getHistoricalClicks();
+            const historicalClicksEl = document.getElementById('historicalClicks');
+            const clickEntries = Object.values(historicalClicks);
+
+            if (clickEntries.length === 0) {
+                historicalClicksEl.innerHTML = '<div class="no-events" style="text-align: center; padding: 24px; color: #9ca3af;">No historical click data yet. Click tracking persists across all visitor sessions.</div>';
+            } else {
+                // Sort by count descending
+                clickEntries.sort((a, b) => b.count - a.count);
+
+                // Calculate total clicks
+                const totalHistoricalClicks = clickEntries.reduce((sum, item) => sum + item.count, 0);
+
+                historicalClicksEl.innerHTML = `
+                    <div style="margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(99, 102, 241, 0.1);">
+                        <span style="font-size: 28px; font-weight: 700; color: #4f46e5;">${totalHistoricalClicks}</span>
+                        <span style="font-size: 13px; color: #6b7280; margin-left: 8px;">Total Clicks Recorded</span>
+                    </div>
+                    <div class="historical-clicks-grid">
+                        ${clickEntries.map(item => `
+                            <div class="historical-click-card">
+                                <div class="historical-click-category">${item.category}</div>
+                                <div class="historical-click-name">${item.value}</div>
+                                <div class="historical-click-count">${item.count}</div>
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
             }
         }
