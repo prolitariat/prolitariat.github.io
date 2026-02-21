@@ -1,0 +1,32 @@
+name: Update Subscriber Count
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Daily at 6am UTC
+  workflow_dispatch:  # Allow manual trigger
+
+permissions:
+  contents: write
+
+jobs:
+  update-count:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetch subscriber count from Buttondown
+        run: |
+          COUNT=$(curl -s -H "Authorization: Token ${{ secrets.BUTTONDOWN_API_KEY }}" \
+            "https://api.buttondown.com/v1/subscribers?status=regular&page_size=1" \
+            | python3 -c "import sys,json; print(json.load(sys.stdin).get('count', 0))")
+          UPDATED=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          echo "{\"count\": $COUNT, \"updated\": \"$UPDATED\"}" > data/subscribers.json
+          echo "Subscriber count: $COUNT"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/subscribers.json
+          git diff --staged --quiet || git commit -m "Update subscriber count" && git push
