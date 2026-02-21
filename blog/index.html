@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog | Brandon Noskoviak</title>
+    <meta name="description" content="Blog posts by Brandon Noskoviak — Staff Engineering Product Manager writing about AI agents, platform management, and product analytics.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        charter: ['Charter', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter'), local('Charter-Roman'), local('ITC Charter');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter Bold'), local('Charter-Bold'), local('ITC Charter Bold');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body {
+            background: linear-gradient(160deg, #e8eeff 0%, #dbeafe 20%, #f0e7ff 45%, #e0f2fe 70%, #ede9fe 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(199, 210, 254, 0.4) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(191, 219, 254, 0.3) 0%, transparent 50%),
+                radial-gradient(ellipse at 40% 80%, rgba(221, 214, 254, 0.3) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .blog-card {
+            transition: all 0.3s ease;
+        }
+        .blog-card:hover {
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.08), transparent);
+            margin: 28px 0;
+        }
+    </style>
+</head>
+<body class="font-charter text-gray-800 antialiased">
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/40">
+        <div class="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
+            <a href="/" class="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors">
+                Brandon Noskoviak
+            </a>
+            <div class="flex items-center gap-4">
+                <a href="/" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">
+                    Portfolio
+                </a>
+                <a href="/#contact" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">
+                    Contact
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-2xl mx-auto px-6 pt-24 pb-16 md:pt-28 md:pb-24">
+
+        <!-- Blog Header -->
+        <header class="mb-12">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Blog</h1>
+            <p class="text-gray-500 text-lg">Occasional writing about AI agents, platform management, and building products.</p>
+        </header>
+
+        <!-- Blog Posts -->
+        <div class="space-y-8">
+
+            <!-- Post 1: Shopify Dark Pattern / AI Agent -->
+            <article class="blog-card glass-card rounded-lg p-6 md:p-8">
+                <a href="/blog/shopify-malware-ai-agent.html" class="block group">
+                    <time class="text-sm text-gray-400 uppercase tracking-wide">February 21, 2026</time>
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-blue-700 transition-colors">
+                        How I Used an AI Agent to Discover Malware, Transfer My Domain, and Fight Shopify Support
+                    </h2>
+                    <p class="text-gray-600 leading-relaxed">
+                        A real-world case study of Claude's Cowork mode managing an entire incident response — from discovering malicious JavaScript on my Shopify store, to filing partner violation reports, to negotiating with customer support for a refund on five years of fraudulent charges.
+                    </p>
+                    <span class="inline-block mt-4 text-sm text-blue-600 group-hover:text-blue-800 font-medium transition-colors">
+                        Read more &rarr;
+                    </span>
+                </a>
+            </article>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center pt-12">
+            <p class="text-sm text-gray-600">
+                &copy; 2026 Brandon Noskoviak
+            </p>
+        </footer>
+
+    </main>
+
+</body>
+</html>
