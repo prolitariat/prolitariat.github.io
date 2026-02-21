@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Blog | Brandon Noskoviak</title>
-    <meta name="description" content="Blog posts by Brandon Noskoviak — Staff Engineering Product Manager writing about AI agents, platform management, and product analytics.">
-
-    <!-- Tailwind CSS -->
+    <meta name="description" content="Writing on AI agents, product management, and building things.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -19,7 +17,6 @@
             }
         }
     </script>
-
     <style>
         @font-face {
             font-family: 'Charter';
@@ -33,28 +30,22 @@
             font-weight: 700;
             font-style: normal;
         }
-
         body {
             background: linear-gradient(160deg, #e8eeff 0%, #dbeafe 20%, #f0e7ff 45%, #e0f2fe 70%, #ede9fe 100%);
             background-attachment: fixed;
             min-height: 100vh;
             position: relative;
         }
-
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background:
                 radial-gradient(ellipse at 20% 50%, rgba(199, 210, 254, 0.4) 0%, transparent 50%),
                 radial-gradient(ellipse at 80% 20%, rgba(191, 219, 254, 0.3) 0%, transparent 50%),
                 radial-gradient(ellipse at 40% 80%, rgba(221, 214, 254, 0.3) 0%, transparent 50%);
             z-index: -1;
         }
-
         .glass-card {
             background: rgba(255, 255, 255, 0.45);
             backdrop-filter: blur(12px);
@@ -62,80 +53,118 @@
             border: 1px solid rgba(255, 255, 255, 0.6);
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
         }
-
-        .nav-link {
-            transition: all 0.2s ease;
-        }
-        .nav-link:hover {
-            background: rgba(255, 255, 255, 0.5);
-        }
-
-        .blog-card {
-            transition: all 0.3s ease;
-        }
-        .blog-card:hover {
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            transform: translateY(-1px);
-        }
-
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.5); }
         .section-divider {
             height: 1px;
             background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.08), transparent);
             margin: 28px 0;
         }
+        .post-link { transition: all 0.2s ease; }
+        .post-link:hover { background: rgba(255, 255, 255, 0.3); }
+        .subscribe-input:focus {
+            outline: none;
+            border-color: rgba(79, 70, 229, 0.5);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
     </style>
 </head>
 <body class="font-charter text-gray-800 antialiased">
 
+    <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass-card border-b border-white/40">
         <div class="max-w-2xl mx-auto px-6 py-3 flex items-center justify-between">
             <a href="/" class="text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors">
                 Brandon Noskoviak
             </a>
             <div class="flex items-center gap-4">
-                <a href="/" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">
-                    Portfolio
-                </a>
-                <a href="/#contact" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">
-                    Contact
-                </a>
+                <a href="/" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">Portfolio</a>
+                <a href="/writing/" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">Blog</a>
+                <a href="/#contact" class="nav-link text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg transition-colors">Contact</a>
             </div>
         </div>
     </nav>
 
     <main class="max-w-2xl mx-auto px-6 pt-24 pb-16 md:pt-28 md:pb-24">
 
-        <header class="mb-12">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Blog</h1>
-            <p class="text-gray-500 text-lg">Occasional writing about AI agents, platform management, and building products.</p>
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Blog</h1>
+            <p class="text-gray-500 text-base">Writing on AI agents, product management, and building things.</p>
         </header>
 
-        <div class="space-y-8">
-
-            <article class="blog-card glass-card rounded-lg p-6 md:p-8">
-                <a href="/writing/shopify-malware-ai-agent.html" class="block group">
-                    <time class="text-sm text-gray-400 uppercase tracking-wide">February 21, 2026</time>
-                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mt-2 mb-3 group-hover:text-blue-700 transition-colors">
-                        How I Used an AI Agent to Discover Malware, Transfer My Domain, and Fight Shopify Support
-                    </h2>
-                    <p class="text-gray-600 leading-relaxed">
-                        A real-world case study of Claude's Cowork mode managing an entire incident response — from discovering malicious JavaScript on my Shopify store, to filing partner violation reports, to negotiating with customer support for a refund on five years of fraudulent charges.
-                    </p>
-                    <span class="inline-block mt-4 text-sm text-blue-600 group-hover:text-blue-800 font-medium transition-colors">
-                        Read more &rarr;
-                    </span>
-                </a>
-            </article>
-
+        <!-- Subscribe Section -->
+        <div class="glass-card rounded-xl p-5 mb-8">
+            <div class="flex items-start justify-between gap-4 mb-3">
+                <div>
+                    <h2 class="text-sm font-semibold text-gray-700 mb-1">Subscribe for new posts</h2>
+                    <p class="text-xs text-gray-400">No spam. Unsubscribe anytime.</p>
+                </div>
+                <div id="subscriber-count" class="text-xs text-gray-400 mt-0.5 whitespace-nowrap" style="display:none;">
+                    <span id="count-number">0</span> subscribers
+                </div>
+            </div>
+            <form
+                action="https://buttondown.com/api/emails/embed-subscribe/noskoviak"
+                method="post"
+                target="popupwindow"
+                onsubmit="window.open('https://buttondown.com/noskoviak', 'popupwindow')"
+                class="flex gap-2"
+            >
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="your@email.com"
+                    required
+                    class="subscribe-input flex-1 px-3 py-2 text-sm bg-white/60 border border-white/60 rounded-lg text-gray-700 placeholder-gray-400"
+                />
+                <button
+                    type="submit"
+                    class="px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-colors whitespace-nowrap"
+                >
+                    Subscribe
+                </button>
+            </form>
         </div>
 
-        <footer class="text-center pt-12">
-            <p class="text-sm text-gray-600">
-                &copy; 2026 Brandon Noskoviak
-            </p>
+        <div class="section-divider"></div>
+
+        <!-- Posts -->
+        <div class="space-y-1">
+            <a href="/writing/shopify-malware-ai-agent.html" class="post-link block rounded-lg px-4 py-4 -mx-4">
+                <div class="flex items-start justify-between gap-4">
+                    <div>
+                        <h2 class="text-base font-semibold text-gray-900 mb-1">How I Used an AI Agent to Discover Malware, Transfer My Domain, and Fight Shopify Support</h2>
+                        <p class="text-sm text-gray-500 leading-relaxed">A real-world case study of Claude's Cowork mode managing an entire incident response.</p>
+                    </div>
+                    <time class="text-xs text-gray-400 mt-1 whitespace-nowrap">Feb 21, 2026</time>
+                </div>
+            </a>
+        </div>
+
+        <div class="section-divider"></div>
+
+        <!-- Footer -->
+        <footer class="text-center pt-4">
+            <p class="text-sm text-gray-600">&copy; 2026 Brandon Noskoviak</p>
         </footer>
 
     </main>
+
+    <!-- Load subscriber count from static JSON -->
+    <script>
+        (function() {
+            fetch('/data/subscribers.json')
+                .then(function(r) { return r.ok ? r.json() : null; })
+                .then(function(data) {
+                    if (data && data.count > 0) {
+                        document.getElementById('count-number').textContent = data.count;
+                        document.getElementById('subscriber-count').style.display = '';
+                    }
+                })
+                .catch(function() {});
+        })();
+    </script>
 
 </body>
 </html>
