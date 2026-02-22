@@ -1,0 +1,61 @@
+name: Download Music Assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  download-soundcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yt-dlp and ffmpeg
+        run: |
+          pip install yt-dlp
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+
+      - name: Create media directory
+        run: mkdir -p music/media/soundcloud
+
+      - name: Download SoundCloud tracks
+        run: |
+          declare -A tracks
+          tracks["my-idea-4"]="https://soundcloud.com/noskoviak/my-idea-4-copy-2"
+          tracks["drake-hotline-bling"]="https://soundcloud.com/noskoviak/drake-hotline-bling-acoustic"
+          tracks["7trax"]="https://soundcloud.com/noskoviak/7trax"
+          tracks["elliott-smith-waltz-2"]="https://soundcloud.com/noskoviak/walt-2"
+          tracks["billy-joel-rock-and-roll"]="https://soundcloud.com/noskoviak/billy-joel-its-still-rock-and"
+          tracks["eric-clapton-layla"]="https://soundcloud.com/noskoviak/eric-clapton-layla-snippet-at"
+          tracks["ray-lamontagne-jolene"]="https://soundcloud.com/noskoviak/practicing"
+          tracks["marshall-tucker-fire"]="https://soundcloud.com/noskoviak/fire-on-the-mountain"
+          tracks["i-tried-making-techno"]="https://soundcloud.com/noskoviak/i-tried-making-techno"
+          tracks["noise-i-make"]="https://soundcloud.com/noskoviak/noise"
+          tracks["ha-ha-ha"]="https://soundcloud.com/noskoviak/sounds-from-friday-afternoon"
+          tracks["original-gmaj"]="https://soundcloud.com/noskoviak/test-two"
+          tracks["harmonics"]="https://soundcloud.com/noskoviak/harmonics"
+          tracks["practicing-fingerpick"]="https://soundcloud.com/noskoviak/test-1"
+          tracks["fourtrack-demo"]="https://soundcloud.com/noskoviak/fourtrack-demo-30-secs"
+          tracks["iron-wine-upward"]="https://soundcloud.com/noskoviak/short-flawed-cover"
+
+          for name in "${!tracks[@]}"; do
+            url="${tracks[$name]}"
+            echo "Downloading: $name from $url"
+            yt-dlp --extract-audio --audio-format mp3 --audio-quality 0 \
+              -o "music/media/soundcloud/$name.%(ext)s" \
+              "$url" || echo "FAILED: $name"
+            sleep 2
+          done
+
+      - name: List downloaded files
+        run: ls -la music/media/soundcloud/
+
+      - name: Commit downloaded tracks
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add music/media/soundcloud/
+          git diff --staged --quiet || git commit -m "Add self-hosted SoundCloud audio files"
+          git push
