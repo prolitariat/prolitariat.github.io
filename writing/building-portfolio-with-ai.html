@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building a Portfolio Site with Claude's Cowork Mode | Brandon Noskoviak</title>
+    <meta name="description" content="How I used Anthropic's Claude in Cowork mode to build a 70K single-file portfolio site with glassmorphism, scroll physics, analytics, and an interactive tour — all through conversation.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        charter: ['Charter', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter'), local('Charter-Roman'), local('ITC Charter');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter Bold'), local('Charter-Bold'), local('ITC Charter Bold');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body {
+            background: linear-gradient(160deg, #e8eeff 0%, #dbeafe 20%, #f0e7ff 45%, #e0f2fe 70%, #ede9fe 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(199, 210, 254, 0.4), transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(191, 219, 254, 0.3), transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(221, 214, 254, 0.3), transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        article h2 {
+            font-family: 'Charter', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #1a1a2e;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        article p {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2d2d3a;
+            margin-bottom: 1.25rem;
+        }
+
+        article ul {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2d2d3a;
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+
+        article li {
+            margin-bottom: 0.5rem;
+        }
+
+        article code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: rgba(99, 102, 241, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #4338ca;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4338ca;
+        }
+
+        .stat-label {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="nav-glass fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="text-lg font-semibold text-gray-800 hover:text-indigo-600 transition-colors" style="font-family: Charter, Georgia, serif;">Brandon Noskoviak</a>
+            <div class="flex gap-6 text-sm text-gray-600">
+                <a href="/" class="hover:text-indigo-600 transition-colors">Portfolio</a>
+                <a href="/writing/" class="hover:text-indigo-600 transition-colors">Blog</a>
+                <a href="/#contact" class="hover:text-indigo-600 transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article -->
+    <main class="max-w-3xl mx-auto px-6 pt-28 pb-20">
+
+        <a href="/writing/" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors">&larr; Back to Blog</a>
+
+        <article class="mt-6">
+            <h1 style="font-family: Charter, Georgia, serif; font-size: 2.4rem; font-weight: 700; line-height: 1.2; color: #1a1a2e;">I Built My Entire Portfolio Site Through Conversation</h1>
+            <p class="mt-4 text-lg italic" style="color: #6b7280; font-family: Charter, Georgia, serif;">What happens when a product manager who hasn't written frontend code in years decides to build a portfolio site using only an AI agent.</p>
+            <p class="mt-3 text-sm" style="color: #9ca3af;">February 20, 2026 &middot; 8 min read</p>
+
+            <hr class="my-8 border-gray-200/60">
+
+            <h2>The Problem</h2>
+
+            <p>I needed a portfolio site. Not a template. Not a WordPress theme. Something that actually reflected how I think about product work — the attention to detail, the iteration, the willingness to throw things away and start over.</p>
+
+            <p>The problem: I'm a product manager. I've spent years in dashboards and roadmaps and stakeholder decks, not writing CSS. I know enough HTML to be dangerous and enough JavaScript to break things. Building something polished enough to show hiring managers felt like a multi-week side project I'd never finish.</p>
+
+            <p>Then Anthropic released Cowork mode for Claude — essentially an AI agent that can browse the web, manage files, and operate your computer on your behalf. I decided to try building the entire site through conversation.</p>
+
+            <h2>The First Conversation</h2>
+
+            <p>I started with a simple prompt: build me a portfolio page. What came back was fine — clean, professional, the kind of thing you'd get from any template. White background, sans-serif font, card grid. It looked like every other portfolio on the internet.</p>
+
+            <p>So I started pushing. What if the background had depth? What if the cards felt like frosted glass? What if the whole thing felt like looking through ice on a cold morning?</p>
+
+            <p>That's when things got interesting. Claude didn't just apply a blur filter and call it done. It built a layered system — a gradient background with radial overlays, glass cards with tuned opacity and backdrop blur, borders that catch light. The kind of thing that takes a designer hours to get right, arrived in a single response.</p>
+
+            <h2>Thirty Commits of Iteration</h2>
+
+            <p>Building the site was not one conversation. It was thirty-plus commits over multiple sessions, each one a small refinement. The commit history tells the story better than I can:</p>
+
+            <div class="glass-card rounded-xl p-5 my-6" style="font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; line-height: 1.9; color: #4338ca;">
+                Water-like momentum physics and floating animation<br>
+                Fluid jelly physics with continuous squash/stretch<br>
+                Add buttery smooth scroll with lerped momentum<br>
+                Refine to gentle water-float motion, remove jelly distortion<br>
+                Strip back all hover animations for complete stillness<br>
+                Remove fade-in animations — cards are immediately present<br>
+                Independent card movement, smooth settle to stillness
+            </div>
+
+            <p>See the pattern? I kept asking for motion, then pulling it back. Adding physics, then stripping it away. The scroll behavior alone went through five iterations — from aggressive jelly distortion to buttery lerped momentum to, ultimately, almost nothing. The final version has barely perceptible movement, which is exactly right.</p>
+
+            <p>This is the part that surprised me. AI-assisted development isn't about getting it right the first time. It's about making iteration so cheap that you can explore ideas you'd never bother with otherwise. I tried scroll physics with momentum dampening. I tried cards that deform like jelly when you scroll past them. I tried ambient wave animations running in the background. All of these were bad ideas, and I found that out in minutes instead of days.</p>
+
+            <h2>The Features That Stuck</h2>
+
+            <p>After all that iteration, the site ended up with a few features I never would have attempted on my own:</p>
+
+            <p><strong>Glassmorphism.</strong> Every card, overlay, and panel uses frosted-glass styling with calibrated opacity, backdrop blur, and layered borders. The background is a multi-stop gradient with radial overlays that give the whole page a sense of atmospheric depth. Getting the contrast right — readable text on translucent surfaces — took several rounds of tuning.</p>
+
+            <p><strong>A built-in analytics dashboard.</strong> Not Google Analytics. A custom, privacy-friendly system that tracks page views, click events, and visitor patterns, all stored in localStorage. It renders behind a glassmorphic overlay with grid-based metrics. Is this overkill for a portfolio site? Absolutely. But it demonstrates something real about how I think about data.</p>
+
+            <p><strong>An interactive guided tour.</strong> A spotlight-and-tooltip system that walks visitors through the site's content, highlighting key sections with a focused beam and explanatory cards. It locks scroll position and dims the background. The kind of feature you'd scope as a two-week sprint for a junior developer.</p>
+
+            <p><strong>Charter typography.</strong> The entire site uses Charter — a serif face that reads well on screens and gives the content a more editorial feel than the standard sans-serif stack. It's a small choice that changes the whole tone of the page.</p>
+
+            <h2>The Numbers</h2>
+
+            <div class="grid grid-cols-3 gap-4 my-8">
+                <div class="stat-box">
+                    <div class="stat-number">70K</div>
+                    <div class="stat-label">Single HTML file</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Commits</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Build tools</div>
+                </div>
+            </div>
+
+            <p>The whole site is one HTML file. Seventy thousand characters of markup, styling, and JavaScript — no build step, no framework, no dependencies beyond Tailwind's CDN. You can view-source the entire thing. This wasn't the plan. It emerged from the process: each conversation added features to the same file, and at no point did the complexity justify splitting it up.</p>
+
+            <p>Some people will look at a 70K single-file site and see a mess. I look at it and see a working product that shipped in days instead of weeks, runs everywhere, loads instantly, and has zero dependencies to maintain. The engineering purist in me cringes a little. The product manager in me recognizes that it works.</p>
+
+            <h2>What Went Wrong</h2>
+
+            <p>It wasn't all smooth. Injecting a 70K file through GitHub's web editor introduced UTF-8 encoding corruption — em dashes turned into mojibake, a closing script tag lost its angle bracket, and special characters doubled up into six-byte sequences. Debugging that required byte-level analysis of the file to find and replace every corrupted character.</p>
+
+            <p>The GitHub Pages blog path also broke permanently. Files in the <code>/blog/</code> directory returned 404s no matter what I tried — Jekyll processing, custom workflows, <code>.nojekyll</code> flags. The fix was to give up and move everything to <code>/writing/</code> instead. Sometimes the right engineering decision is to walk away from the problem.</p>
+
+            <h2>The Meta Question</h2>
+
+            <p>There's something recursive about using an AI agent to build a portfolio that's meant to demonstrate your ability to ship products. Am I showing off my skills, or Claude's?</p>
+
+            <p>I think the honest answer is: both, and that's the point. The value I brought wasn't writing CSS or JavaScript. It was knowing what to ask for, knowing when something looked wrong, knowing when to push further and when to pull back. I was the product manager and Claude was the engineering team. The commit history — thirty rounds of adding and removing and refining — is exactly what product development looks like. The tool just moved faster than any team I've worked with.</p>
+
+            <p>If you're a product manager, a designer, or anyone else who thinks in systems but doesn't write code daily, this is what the near future looks like. The bottleneck isn't implementation anymore. It's taste.</p>
+        </article>
+
+        <!-- Back to blog -->
+        <div class="mt-12 pt-8 border-t border-gray-200/60">
+            <a href="/writing/" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors">&larr; Back to Blog</a>
+        </div>
+
+    </main>
+
+</body>
+</html>
