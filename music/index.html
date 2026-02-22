@@ -19,104 +19,25 @@
         }
     </script>
     <style>
-        @font-face {
-            font-family: 'Charter';
-            src: local('Charter'), local('Charter-Roman'), local('ITC Charter');
-            font-weight: 400;
-            font-style: normal;
-        }
-        @font-face {
-            font-family: 'Charter';
-            src: local('Charter Bold'), local('Charter-Bold'), local('ITC Charter Bold');
-            font-weight: 700;
-            font-style: normal;
-        }
-
-        body {
-            font-family: 'Charter', Georgia, 'Cambria', 'Times New Roman', serif;
-            background: linear-gradient(135deg, #e8e0f0 0%, #d4e4f7 25%, #e8e0f0 50%, #d4e4f7 75%, #e8e0f0 100%);
-            background-attachment: fixed;
-            min-height: 100vh;
-        }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
-        }
-
-        .heading-charter {
-            font-family: 'Charter', Georgia, serif;
-            font-weight: 700;
-            letter-spacing: -0.01em;
-        }
-
-        .timeline-line {
-            position: absolute;
-            left: 1.5rem;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, rgba(99, 102, 241, 0.3), rgba(99, 102, 241, 0.05));
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 1.5rem;
-            width: 12px;
-            height: 12px;
-            background: #6366f1;
-            border-radius: 50%;
-            transform: translateX(-5px);
-            border: 2px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
-            z-index: 1;
-        }
-
-        .timeline-dot.cover {
-            background: #8b5cf6;
-        }
-
-        .year-marker {
-            position: sticky;
-            top: 4rem;
-            z-index: 10;
-        }
-
-        .tag-original {
-            background: rgba(99, 102, 241, 0.1);
-            color: #4f46e5;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-        }
-
-        .tag-cover {
-            background: rgba(139, 92, 246, 0.1);
-            color: #7c3aed;
-            border: 1px solid rgba(139, 92, 246, 0.2);
-        }
-
-        .embed-container {
-            border-radius: 8px;
-            overflow: hidden;
-            margin-top: 0.75rem;
-        }
-
-        .embed-container iframe {
-            border: none;
-            border-radius: 8px;
-        }
-
-        @media (max-width: 640px) {
-            .timeline-line { left: 1rem; }
-            .timeline-dot { left: 1rem; }
-        }
+        @font-face { font-family: 'Charter'; src: local('Charter'), local('Charter-Roman'), local('ITC Charter'); font-weight: 400; font-style: normal; }
+        @font-face { font-family: 'Charter'; src: local('Charter Bold'), local('Charter-Bold'), local('ITC Charter Bold'); font-weight: 700; font-style: normal; }
+        body { font-family: 'Charter', Georgia, 'Cambria', 'Times New Roman', serif; background: linear-gradient(135deg, #e8e0f0 0%, #d4e4f7 25%, #e8e0f0 50%, #d4e4f7 75%, #e8e0f0 100%); background-attachment: fixed; min-height: 100vh; }
+        .glass-card { background: rgba(255, 255, 255, 0.55); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06); }
+        .heading-charter { font-family: 'Charter', Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+        .timeline-line { position: absolute; left: 1.5rem; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, rgba(99, 102, 241, 0.3), rgba(99, 102, 241, 0.05)); }
+        .timeline-dot { position: absolute; left: 1.5rem; width: 12px; height: 12px; background: #6366f1; border-radius: 50%; transform: translateX(-5px); border: 2px solid rgba(255, 255, 255, 0.8); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); z-index: 1; }
+        .timeline-dot.cover { background: #8b5cf6; }
+        .year-marker { position: sticky; top: 4rem; z-index: 10; }
+        .tag-original { background: rgba(99, 102, 241, 0.1); color: #4f46e5; border: 1px solid rgba(99, 102, 241, 0.2); }
+        .tag-cover { background: rgba(139, 92, 246, 0.1); color: #7c3aed; border: 1px solid rgba(139, 92, 246, 0.2); }
+        audio { width: 100%; margin-top: 0.75rem; border-radius: 8px; }
+        audio::-webkit-media-controls-panel { background: rgba(99, 102, 241, 0.05); }
+        .embed-container { border-radius: 8px; overflow: hidden; margin-top: 0.75rem; }
+        .embed-container iframe { border: none; border-radius: 8px; }
+        @media (max-width: 640px) { .timeline-line { left: 1rem; } .timeline-dot { left: 1rem; } }
     </style>
 </head>
 <body class="font-charter text-gray-800">
-
-    <!-- Navigation -->
     <nav class="sticky top-0 z-50 glass-card border-b border-white/40">
         <div class="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
             <a href="/" class="heading-charter text-lg text-gray-900 hover:text-indigo-600 transition-colors">Brandon Noskoviak</a>
@@ -127,16 +48,10 @@
             </div>
         </div>
     </nav>
-
     <main class="max-w-3xl mx-auto px-6 py-12">
-
-        <!-- Header -->
         <section class="glass-card rounded-lg p-8 md:p-10 mb-10">
             <h1 class="heading-charter text-3xl mb-3">Music</h1>
-            <p class="text-gray-600 leading-relaxed">
-                Recordings I've made over the years &mdash; originals and covers, bedroom demos and live snippets.
-                Guitar, four-track experiments, and the occasional attempt at something completely different.
-            </p>
+            <p class="text-gray-600 leading-relaxed">Recordings I've made over the years &mdash; originals and covers, bedroom demos and live snippets. Guitar, four-track experiments, and the occasional attempt at something completely different.</p>
             <div class="flex gap-3 mt-5 text-xs">
                 <span class="tag-original px-2.5 py-1 rounded-full font-medium">Original</span>
                 <span class="tag-cover px-2.5 py-1 rounded-full font-medium">Cover</span>
@@ -146,301 +61,239 @@
                 <a href="https://www.youtube.com/@adultBrandon" target="_blank" class="text-indigo-500 hover:text-indigo-700 transition-colors">YouTube &nearr;</a>
             </div>
         </section>
-
-        <!-- Timeline -->
         <section class="relative">
             <div class="timeline-line"></div>
-
             <!-- 2016 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2016</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">My Idea 4</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; May 2016</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/my-idea-4-copy-2&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">My Idea 4</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
                     </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Drake &mdash; Hotline Bling</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Jan 2016 &middot; <span class="italic">"made before the beef. Kendrick ftw."</span></p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/drake-hotline-bling-acoustic&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
+                    <p class="text-sm text-gray-500 mb-2">May 2016</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/my-idea-4.mp3"></audio>
                 </div>
             </div>
-
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Drake &mdash; Hotline Bling</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Jan 2016 &middot; <span class="italic">"made before the beef. Kendrick ftw."</span></p>
+                    <audio controls preload="none" src="/music/media/soundcloud/drake-hotline-bling.mp3"></audio>
+                </div>
+            </div>
+            </div>
             <!-- 2015 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2015</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">7trax</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; May 2015</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/7trax&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">7trax</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
                     </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Elliott Smith &mdash; Walt #2 (Weak)</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; May 2015</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/walt-2&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
+                    <p class="text-sm text-gray-500 mb-2">May 2015</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/7trax.mp3"></audio>
                 </div>
             </div>
-
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Elliott Smith &mdash; Waltz #2 (Weak)</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">May 2015</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/elliott-smith-waltz-2.mp3"></audio>
+                </div>
+            </div>
+            </div>
             <!-- 2014 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2014</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Billy Joel &mdash; It's Still Rock and Roll to Me</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Dec 2014 &middot; 4,677 plays</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/billy-joel-its-still-rock-and&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Billy Joel &mdash; It\'s Still Rock and Roll to Me</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
                     </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Eric Clapton &mdash; Layla (Snippet)</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; May 2014 &middot; Eau Claire, WI</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/eric-clapton-layla-snippet-at&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Ray LaMontagne &mdash; Jolene</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; May 2014 &middot; <span class="italic">"no justice done"</span></p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/practicing&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Marshall Tucker Band &mdash; Fire on the Mountain</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Mar 2014 &middot; w/ Dan on deep voice</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/fire-on-the-mountain&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">i tried making techno</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Feb 2014</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/i-tried-making-techno&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">noise i make</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Feb 2014</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/noise&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Dec 2014 &middot; 4,677 plays</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/billy-joel-rock-and-roll.mp3"></audio>
                 </div>
             </div>
-
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Eric Clapton &mdash; Layla (Snippet)</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">May 2014 &middot; Eau Claire, WI</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/eric-clapton-layla.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Ray LaMontagne &mdash; Jolene</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">May 2014 &middot; <span class="italic">"no justice done"</span></p>
+                    <audio controls preload="none" src="/music/media/soundcloud/ray-lamontagne-jolene.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Marshall Tucker Band &mdash; Fire on the Mountain</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Mar 2014 &middot; w/ Dan on deep voice</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/marshall-tucker-fire.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">i tried making techno</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Feb 2014</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/i-tried-making-techno.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">noise i make</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Feb 2014</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/noise-i-make.mp3"></audio>
+                </div>
+            </div>
+            </div>
             <!-- 2012 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2012</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Ha Ha Ha</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Aug 2012 &middot; Blues</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/sounds-from-friday-afternoon&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Ha Ha Ha</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
                     </div>
+                    <p class="text-sm text-gray-500 mb-2">Aug 2012 &middot; Blues</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/ha-ha-ha.mp3"></audio>
                 </div>
             </div>
-
+            </div>
             <!-- 2011 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2011</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">original Gmaj</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Jun 2011</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/test-two&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">original Gmaj</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
                     </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Harmonics</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Jun 2011 &middot; Acoustic</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/harmonics&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">practicing fingerpick pattern</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Jun 2011 &middot; Acoustic</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/test-1&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Fourtrack demo 30 secs.</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Apr 2011</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/fourtrack-demo-30-secs&color=%236366f1&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot cover top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">Iron &amp; Wine &mdash; Upward Over the Mountain</h3>
-                            <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">SoundCloud &middot; Mar 2011 &middot; Acoustic</p>
-                        <div class="embed-container">
-                            <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/noskoviak/short-flawed-cover&color=%238b5cf6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false" loading="lazy"></iframe>
-                        </div>
-                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Jun 2011</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/original-gmaj.mp3"></audio>
                 </div>
             </div>
-
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Harmonics</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Jun 2011 &middot; Acoustic</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/harmonics.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">practicing fingerpick pattern</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Jun 2011 &middot; Acoustic</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/practicing-fingerpick.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Fourtrack demo 30 secs.</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Apr 2011</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/fourtrack-demo.mp3"></audio>
+                </div>
+            </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot cover top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">Iron &amp; Wine &mdash; Upward Over the Mountain</h3>
+                        <span class="tag-cover text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Cover</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">Mar 2011 &middot; Acoustic</p>
+                    <audio controls preload="none" src="/music/media/soundcloud/iron-wine-upward.mp3"></audio>
+                </div>
+            </div>
+            </div>
             <!-- 2010 -->
             <div class="mb-12">
                 <div class="year-marker pl-14 sm:pl-16 mb-6">
                     <h2 class="heading-charter text-xl text-gray-900">2010</h2>
                 </div>
-
-                <div class="relative pl-14 sm:pl-16 mb-8">
-                    <div class="timeline-dot top-1"></div>
-                    <div class="glass-card rounded-lg p-5">
-                        <div class="flex items-start justify-between gap-2 mb-1">
-                            <h3 class="font-semibold text-gray-900">practicing with my free webcam</h3>
-                            <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
-                        </div>
-                        <p class="text-sm text-gray-500 mb-2">YouTube &middot; Nov 2010 &middot; 5:52 &middot; <span class="italic">"a little diddy i wrote when i was a kid"</span></p>
-                        <div class="embed-container aspect-video">
-                            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/2AyiHprzI9w" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
-                        </div>
+            <div class="relative pl-14 sm:pl-16 mb-8">
+                <div class="timeline-dot top-1"></div>
+                <div class="glass-card rounded-lg p-5">
+                    <div class="flex items-start justify-between gap-2 mb-1">
+                        <h3 class="font-semibold text-gray-900">practicing with my free webcam</h3>
+                        <span class="tag-original text-xs px-2 py-0.5 rounded-full whitespace-nowrap">Original</span>
+                    </div>
+                    <p class="text-sm text-gray-500 mb-2">YouTube &middot; Nov 2010 &middot; 5:52 &middot; <span class="italic">"a little diddy i wrote when i was a kid"</span></p>
+                    <div class="embed-container aspect-video">
+                        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/2AyiHprzI9w" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
                     </div>
                 </div>
             </div>
-
+            </div>
         </section>
-
-        <!-- Footer -->
         <footer class="text-center pt-8 pb-12">
             <p class="text-sm text-gray-500">
                 <a href="/" class="text-indigo-500 hover:text-indigo-700 transition-colors">&larr; Back to Portfolio</a>
             </p>
         </footer>
-
     </main>
-
 </body>
 </html>
