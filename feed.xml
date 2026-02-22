@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Brandon Noskoviak</title>
+    <link>https://prolitariat.github.io/writing/</link>
+    <description>Writing on AI agents, product management, and building things.</description>
+    <language>en-us</language>
+    <atom:link href="https://prolitariat.github.io/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>How I Used an AI Agent to Discover Malware, Transfer My Domain, and Fight Shopify Support</title>
+      <link>https://prolitariat.github.io/writing/shopify-malware-ai-agent.html</link>
+      <guid>https://prolitariat.github.io/writing/shopify-malware-ai-agent.html</guid>
+      <pubDate>Sat, 21 Feb 2026 12:00:00 GMT</pubDate>
+      <description>A real-world case study of Claude's Cowork mode managing an entire incident response — from discovery to remediation to customer support negotiation.</description>
+    </item>
+    <item>
+      <title>I Built My Entire Portfolio Site Through Conversation</title>
+      <link>https://prolitariat.github.io/writing/building-portfolio-with-ai.html</link>
+      <guid>https://prolitariat.github.io/writing/building-portfolio-with-ai.html</guid>
+      <pubDate>Thu, 20 Feb 2026 12:00:00 GMT</pubDate>
+      <description>How I used Anthropic's Claude in Cowork mode to build a 70K single-file portfolio site with glassmorphism, scroll physics, analytics, and an interactive tour — all through conversation.</description>
+    </item>
+  </channel>
+</rss>
