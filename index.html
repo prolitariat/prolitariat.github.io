@@ -898,6 +898,11 @@
 
     </style>
     <link rel="alternate" type="application/rss+xml" title="Brandon Noskoviak" href="/feed.xml">
+      <script>
+        // Prevent flash: apply theme before render
+        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();
+    </script>
+    <script src="/shared/theme.js" defer></script>
   </head>
 <body class="font-charter text-gray-800 antialiased">
     <!-- Navigation -->
