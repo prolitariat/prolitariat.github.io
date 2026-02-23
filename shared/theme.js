@@ -46,7 +46,22 @@
       border-bottom-color: rgba(255, 255, 255, 0.06) !important;
     }
 
-    /* Navigation */
+    /* Glass card text — ensure readability */
+      [data-theme="dark"] .glass-card,
+      [data-theme="dark"] .glass-card p,
+      [data-theme="dark"] .glass-card span,
+      [data-theme="dark"] .glass-card li,
+      [data-theme="dark"] .glass-card dd { color: #d1d5db !important; }
+      [data-theme="dark"] .glass-card h2,
+      [data-theme="dark"] .glass-card h3,
+      [data-theme="dark"] .glass-card h4,
+      [data-theme="dark"] .heading-charter { color: #f3f4f6 !important; }
+      [data-theme="dark"] .glass-card dt,
+      [data-theme="dark"] .glass-card .text-sm { color: #9ca3af !important; }
+      [data-theme="dark"] .glass-card a:not(.theme-toggle) { color: #818cf8 !important; }
+      [data-theme="dark"] .glass-card strong { color: #f3f4f6 !important; }
+
+      /* Navigation */
     [data-theme="dark"] nav {
       border-color: rgba(255, 255, 255, 0.06) !important;
     }
