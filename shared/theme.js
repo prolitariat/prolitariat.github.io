@@ -96,9 +96,24 @@
     /* ---- Navigation ---- */
     [data-theme="dark"] nav {
       border-color: rgba(255, 255, 255, 0.06) !important;
+      background: rgba(15, 15, 30, 0.85) !important;
     }
     [data-theme="dark"] .nav-link:hover {
       background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    /* ---- Inline color overrides (SolidJS inline styles) ---- */
+    [data-theme="dark"] [style*="color: #0a0a0a"],
+    [data-theme="dark"] [style*="color: rgb(10, 10, 10)"] {
+      color: #d1d5db !important;
+    }
+    [data-theme="dark"] h3.text-gray-900,
+    [data-theme="dark"] h3.text-lg {
+      color: #f0f0ff !important;
+    }
+    [data-theme="dark"] .tour-trigger,
+    [data-theme="dark"] .analytics-close {
+      color: #a0a0c0 !important;
     }
 
     /* ---- Hero text (outside glass cards) ---- */
@@ -181,8 +196,9 @@
     /* ---- Links ---- */
     [data-theme="dark"] a.text-indigo-500,
     [data-theme="dark"] a.text-indigo-600,
-    [data-theme="dark"] .text-indigo-500 {
-      color: #a48fff !important;
+    [data-theme="dark"] .text-indigo-500,
+    [data-theme="dark"] a[class*="text-indigo"] {
+      color: #c4b5fd !important;
     }
     [data-theme="dark"] a.text-indigo-500:hover,
     [data-theme="dark"] a.text-indigo-600:hover {
