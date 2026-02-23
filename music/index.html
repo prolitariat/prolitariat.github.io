@@ -36,7 +36,12 @@
         .embed-container iframe { border: none; border-radius: 8px; }
         @media (max-width: 640px) { .timeline-line { left: 1rem; } .timeline-dot { left: 1rem; } }
     </style>
-</head>
+    <script>
+        // Prevent flash: apply theme before render
+        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();
+    </script>
+    <script src="/shared/theme.js" defer></script>
+  </head>
 <body class="font-charter text-gray-800">
     <nav class="sticky top-0 z-50 glass-card border-b border-white/40">
         <div class="max-w-3xl mx-auto px-6 py-4 flex justify-between items-center">
