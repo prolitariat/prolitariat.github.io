@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 380px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 13px;
+      color: #1a1a1a;
+      background: #f8f9fa;
+    }
+
+    .header {
+      background: #1b2a4a;
+      color: #fff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      font-size: 20px;
+    }
+
+    .header h1 {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .header .url {
+      font-size: 11px;
+      color: #8fa4c8;
+      margin-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 320px;
+    }
+
+    #loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 16px;
+      color: #666;
+    }
+
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #e0e0e0;
+      border-top-color: #1b2a4a;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      margin-bottom: 12px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    #not-detected {
+      display: none;
+      padding: 40px 16px;
+      text-align: center;
+      color: #666;
+    }
+
+    #not-detected .nd-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+
+    #not-detected h2 {
+      font-size: 15px;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    #not-detected p {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #results {
+      display: none;
+    }
+
+    .checks {
+      padding: 8px 0;
+    }
+
+    .check-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 8px 16px;
+      gap: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .check-row:last-child {
+      border-bottom: none;
+    }
+
+    .check-status {
+      font-size: 16px;
+      flex-shrink: 0;
+      line-height: 1.2;
+    }
+
+    .check-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .check-label {
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .check-detail {
+      font-size: 11px;
+      color: #777;
+      word-break: break-all;
+    }
+
+    .summary-bar {
+      background: #fff;
+      border-top: 2px solid #e0e0e0;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .summary-counts {
+      font-size: 12px;
+      color: #555;
+    }
+
+    .summary-counts .pass { color: #16a34a; }
+    .summary-counts .warn { color: #d97706; }
+    .summary-counts .fail { color: #dc2626; }
+
+    .copy-btn {
+      background: #1b2a4a;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .copy-btn:hover {
+      background: #263c66;
+    }
+
+    .copy-btn.copied {
+      background: #16a34a;
+    }
+
+    #error-state {
+      display: none;
+      padding: 32px 16px;
+      text-align: center;
+      color: #dc2626;
+    }
+
+    #error-state p {
+      font-size: 12px;
+      margin-top: 8px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="header-icon">🩺</span>
+    <div>
+      <h1>Pendo Health Check</h1>
+      <div class="url" id="page-url"></div>
+    </div>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    Running diagnostics…
+  </div>
+
+  <div id="not-detected">
+    <div class="nd-icon">🔍</div>
+    <h2>Pendo Not Detected</h2>
+    <p>No Pendo agent was found on this page.<br>Make sure Pendo is installed and the page has fully loaded.</p>
+  </div>
+
+  <div id="error-state">
+    <div style="font-size:28px">⚠️</div>
+    <strong>Unable to run checks</strong>
+    <p id="error-message">Could not access this page. Chrome system pages and the web store are restricted.</p>
+  </div>
+
+  <div id="results">
+    <div class="checks" id="checks-list"></div>
+    <div class="summary-bar">
+      <span class="summary-counts" id="summary-counts"></span>
+      <button class="copy-btn" id="copy-btn">Copy Results</button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
