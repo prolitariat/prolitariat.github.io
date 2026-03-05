@@ -159,6 +159,26 @@ function buildSetupPlainText(url, data) {
     lines.push("");
   }
 
+  if (data.csp) {
+    lines.push("── Content Security Policy ──");
+    if (data.csp.detected) {
+      lines.push(`CSP source: ${data.csp.source || "meta tag"}`);
+      const dirNames = Object.keys(data.csp.directives || {});
+      if (dirNames.length > 0) lines.push(`Directives: ${dirNames.join(", ")}`);
+      if (data.csp.issues && data.csp.issues.length > 0) {
+        data.csp.issues.forEach((issue) => {
+          const icon = issue.severity === "error" ? "❌" : issue.severity === "warning" ? "⚠️" : "💡";
+          lines.push(`  ${icon} ${issue.directive}: ${issue.detail}`);
+        });
+      } else {
+        lines.push("  ✅ All Pendo domains appear allowed");
+      }
+    } else {
+      lines.push(`No restrictive CSP detected (${data.csp.source || "N/A"})`);
+    }
+    lines.push("");
+  }
+
   if (data.visitorFields && data.visitorFields.length > 0) {
     lines.push("── Visitor Metadata Fields ──");
     data.visitorFields.forEach((f) => {
@@ -244,6 +264,34 @@ function renderSetup(data) {
       <div class="detail-row"><span class="detail-key">Visitor ID</span><span class="detail-val">${data.initialization.hasVisitorId ? '<span class="badge badge-green">Passed</span>' : '<span class="badge badge-red">Missing</span>'}</span></div>
       <div class="detail-row"><span class="detail-key">Account ID</span><span class="detail-val">${data.initialization.hasAccountId ? '<span class="badge badge-green">Passed</span>' : '<span class="badge badge-yellow">Missing</span>'}</span></div>`;
     container.innerHTML += initHtml;
+  }
+
+  // CSP Analysis section
+  if (data.csp) {
+    container.innerHTML += `<div class="section-header">Content Security Policy</div>`;
+    if (data.csp.detected) {
+      let cspHtml = `<div class="detail-row"><span class="detail-key">CSP detected</span><span class="detail-val"><span class="badge badge-yellow">Yes</span> (${escapeHtml(data.csp.source || "meta tag")})</span></div>`;
+
+      // Show directive summary
+      const dirNames = Object.keys(data.csp.directives || {});
+      if (dirNames.length > 0) {
+        cspHtml += `<div class="detail-row"><span class="detail-key">Directives</span><span class="detail-val">${escapeHtml(dirNames.join(", "))}</span></div>`;
+      }
+
+      // Show issues
+      if (data.csp.issues && data.csp.issues.length > 0) {
+        data.csp.issues.forEach((issue) => {
+          const icon = issue.severity === "error" ? "❌" : issue.severity === "warning" ? "⚠️" : "💡";
+          const cls = issue.severity === "error" ? "badge-red" : issue.severity === "warning" ? "badge-yellow" : "badge-blue";
+          cspHtml += `<div class="detail-row"><span class="detail-key">${icon} ${escapeHtml(issue.directive)}</span><span class="detail-val">${escapeHtml(issue.detail)}</span></div>`;
+        });
+      } else {
+        cspHtml += `<div class="detail-row"><span class="detail-key">Status</span><span class="detail-val"><span class="badge badge-green">Pendo-compatible</span> All required domains appear to be allowed</span></div>`;
+      }
+      container.innerHTML += cspHtml;
+    } else {
+      container.innerHTML += `<div class="detail-row"><span class="detail-key">CSP detected</span><span class="detail-val"><span class="badge badge-green">No</span> ${escapeHtml(data.csp.source || "No restrictive CSP found")}</span></div>`;
+    }
   }
 
   // Visitor Metadata section
@@ -560,6 +608,90 @@ function runPendoHealthCheck() {
     add("warn", "Data Host", "Error detecting data host: " + e.message);
   }
 
+  // 11. Content Security Policy (CSP)
+  try {
+    var cspIssues = [];
+
+    // Check CSP from meta tags
+    var cspMetas = document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]');
+    var cspContent = "";
+    for (var cm = 0; cm < cspMetas.length; cm++) {
+      cspContent += " " + (cspMetas[cm].getAttribute("content") || "");
+    }
+
+    if (cspContent.trim()) {
+      // Parse relevant directives
+      var directives = {};
+      cspContent.split(";").forEach(function(d) {
+        var parts = d.trim().split(/\s+/);
+        if (parts.length > 0) directives[parts[0]] = parts.slice(1);
+      });
+
+      var pendoHosts = ["cdn.pendo.io", "*.pendo.io", "pendo.io", "data.pendo.io", "app.pendo.io"];
+
+      // Check script-src
+      var scriptSrc = directives["script-src"] || directives["default-src"] || [];
+      if (scriptSrc.length > 0) {
+        var allowsPendo = scriptSrc.some(function(v) {
+          return v === "'unsafe-inline'" || v === "'unsafe-eval'" || v === "*" ||
+            pendoHosts.some(function(h) { return v.indexOf(h) !== -1; });
+        });
+        if (!allowsPendo) cspIssues.push("script-src may block Pendo agent scripts");
+      }
+
+      // Check connect-src (for data transmission)
+      var connectSrc = directives["connect-src"] || directives["default-src"] || [];
+      if (connectSrc.length > 0) {
+        var allowsConnect = connectSrc.some(function(v) {
+          return v === "*" || pendoHosts.some(function(h) { return v.indexOf(h) !== -1; });
+        });
+        if (!allowsConnect) cspIssues.push("connect-src may block Pendo data transmission");
+      }
+
+      // Check style-src (Pendo injects inline styles for guides)
+      var styleSrc = directives["style-src"] || directives["default-src"] || [];
+      if (styleSrc.length > 0) {
+        var allowsStyle = styleSrc.some(function(v) {
+          return v === "'unsafe-inline'" || v === "*";
+        });
+        if (!allowsStyle) cspIssues.push("style-src may block Pendo guide styling (needs 'unsafe-inline')");
+      }
+
+      // Check img-src (guide images)
+      var imgSrc = directives["img-src"] || directives["default-src"] || [];
+      if (imgSrc.length > 0) {
+        var allowsImg = imgSrc.some(function(v) {
+          return v === "*" || v === "data:" || pendoHosts.some(function(h) { return v.indexOf(h) !== -1; });
+        });
+        if (!allowsImg) cspIssues.push("img-src may block Pendo guide images");
+      }
+
+      // Check frame-src (Pendo resource center uses iframes)
+      var frameSrc = directives["frame-src"] || directives["child-src"] || directives["default-src"] || [];
+      if (frameSrc.length > 0) {
+        var allowsFrame = frameSrc.some(function(v) {
+          return v === "*" || pendoHosts.some(function(h) { return v.indexOf(h) !== -1; });
+        });
+        if (!allowsFrame) cspIssues.push("frame-src may block Pendo resource center iframes");
+      }
+
+      if (cspIssues.length > 0) {
+        add("warn", "Content Security Policy", cspIssues.join("; "));
+      } else {
+        add("pass", "Content Security Policy", "CSP found — Pendo domains appear to be allowed");
+      }
+    } else {
+      add("pass", "Content Security Policy", "No restrictive CSP meta tag detected");
+    }
+
+    // Also check for CSP violation events (indicates active blocking)
+    var cspViolations = [];
+    var origListener = document.addEventListener;
+    // We can't retroactively detect past violations, but we note the meta-tag analysis
+  } catch (e) {
+    add("warn", "Content Security Policy", "Error checking CSP: " + e.message);
+  }
+
   return { pendoDetected: true, checks: checks };
 }
 
@@ -572,6 +704,7 @@ function runPendoSetupAssistant() {
     framework: null,
     snippet: null,
     initialization: null,
+    csp: null,
     visitorFields: [],
     accountFields: [],
     recommendations: []
@@ -746,7 +879,111 @@ function runPendoSetupAssistant() {
   result.initialization = init;
 
   // ========================================================================
-  // 4. METADATA FIELD VALIDATION
+  // 4. CONTENT SECURITY POLICY ANALYSIS
+  // ========================================================================
+  var csp = { detected: false, source: null, directives: {}, issues: [] };
+
+  try {
+    // Check CSP from meta tags
+    var cspMetas = document.querySelectorAll('meta[http-equiv="Content-Security-Policy"]');
+    var cspRaw = "";
+    for (var cm = 0; cm < cspMetas.length; cm++) {
+      cspRaw += " " + (cspMetas[cm].getAttribute("content") || "");
+    }
+
+    if (cspRaw.trim()) {
+      csp.detected = true;
+      csp.source = "meta tag";
+
+      // Parse directives
+      cspRaw.split(";").forEach(function(d) {
+        var parts = d.trim().split(/\s+/);
+        if (parts.length > 0 && parts[0]) {
+          csp.directives[parts[0]] = parts.slice(1);
+        }
+      });
+
+      var pendoHosts = ["cdn.pendo.io", "*.pendo.io", "pendo.io", "data.pendo.io", "app.pendo.io", "pendo-static-5763789454311424.storage.googleapis.com"];
+
+      function hostAllowed(sources) {
+        return sources.some(function(v) {
+          return v === "*" || pendoHosts.some(function(h) { return v.indexOf(h) !== -1; });
+        });
+      }
+
+      function valueAllowed(sources, val) {
+        return sources.some(function(v) { return v === val; });
+      }
+
+      // script-src
+      var scriptSrc = csp.directives["script-src"] || csp.directives["default-src"] || [];
+      if (scriptSrc.length > 0) {
+        if (!hostAllowed(scriptSrc) && !valueAllowed(scriptSrc, "'unsafe-inline'") && !valueAllowed(scriptSrc, "'unsafe-eval'")) {
+          csp.issues.push({ directive: "script-src", severity: "error", detail: "Pendo CDN domains not listed. Add cdn.pendo.io and app.pendo.io to script-src." });
+        }
+        if (!valueAllowed(scriptSrc, "'unsafe-inline'")) {
+          csp.issues.push({ directive: "script-src", severity: "warning", detail: "Missing 'unsafe-inline'. Pendo's inline initialization snippet may be blocked. Use a nonce or hash instead." });
+        }
+      }
+
+      // connect-src (XHR/fetch for data transmission)
+      var connectSrc = csp.directives["connect-src"] || csp.directives["default-src"] || [];
+      if (connectSrc.length > 0 && !hostAllowed(connectSrc)) {
+        csp.issues.push({ directive: "connect-src", severity: "error", detail: "Pendo data endpoints not listed. Add data.pendo.io (or your CNAME) to connect-src for event data transmission." });
+      }
+
+      // style-src (Pendo injects inline styles for guides/tooltips)
+      var styleSrc = csp.directives["style-src"] || csp.directives["default-src"] || [];
+      if (styleSrc.length > 0 && !valueAllowed(styleSrc, "'unsafe-inline'") && !valueAllowed(styleSrc, "*")) {
+        csp.issues.push({ directive: "style-src", severity: "warning", detail: "Missing 'unsafe-inline'. Pendo guides and tooltips inject inline styles that will be blocked." });
+      }
+
+      // img-src (guide images, resource center assets)
+      var imgSrc = csp.directives["img-src"] || csp.directives["default-src"] || [];
+      if (imgSrc.length > 0 && !hostAllowed(imgSrc) && !valueAllowed(imgSrc, "*")) {
+        var hasData = valueAllowed(imgSrc, "data:");
+        csp.issues.push({ directive: "img-src", severity: "warning", detail: "Pendo CDN not in img-src. Guide images and resource center assets may not load." + (hasData ? "" : " Also consider adding data: for inline images.") });
+      }
+
+      // font-src (Pendo guides may load custom fonts)
+      var fontSrc = csp.directives["font-src"] || csp.directives["default-src"] || [];
+      if (fontSrc.length > 0 && !hostAllowed(fontSrc) && !valueAllowed(fontSrc, "*")) {
+        csp.issues.push({ directive: "font-src", severity: "tip", detail: "If Pendo guides use custom fonts, add cdn.pendo.io to font-src." });
+      }
+
+      // frame-src (resource center, in-app designer)
+      var frameSrc = csp.directives["frame-src"] || csp.directives["child-src"] || csp.directives["default-src"] || [];
+      if (frameSrc.length > 0 && !hostAllowed(frameSrc)) {
+        csp.issues.push({ directive: "frame-src", severity: "warning", detail: "Pendo not in frame-src. The resource center and in-app designer use iframes that may be blocked." });
+      }
+
+      // worker-src (Pendo may use web workers)
+      var workerSrc = csp.directives["worker-src"] || csp.directives["default-src"] || [];
+      if (workerSrc.length > 0 && !valueAllowed(workerSrc, "'self'") && !valueAllowed(workerSrc, "*") && !valueAllowed(workerSrc, "blob:")) {
+        csp.issues.push({ directive: "worker-src", severity: "tip", detail: "If Pendo uses web workers, ensure worker-src allows blob: or 'self'." });
+      }
+    }
+
+    // Try to detect CSP from HTTP header via a test fetch (heuristic)
+    if (!csp.detected) {
+      // Check if any CSP violations have been observed (heuristic: look for blocked pendo resources)
+      var perfEntries = performance.getEntriesByType && performance.getEntriesByType("resource") || [];
+      var pendoResources = perfEntries.filter(function(e) { return e.name && e.name.indexOf("pendo") !== -1; });
+      if (pendoResources.length > 0) {
+        // Pendo resources loaded fine — CSP from HTTP headers is likely not blocking
+        csp.source = "none detected (HTTP header CSP cannot be read from JS, but Pendo resources loaded successfully)";
+      } else if (typeof window.pendo !== "undefined" && window.pendo) {
+        csp.source = "none detected (Pendo agent is functional)";
+      }
+    }
+  } catch (e) {
+    csp.issues.push({ directive: "parse-error", severity: "warning", detail: "Error analyzing CSP: " + e.message });
+  }
+
+  result.csp = csp;
+
+  // ========================================================================
+  // 5. METADATA FIELD VALIDATION
   // ========================================================================
 
   var SENSITIVE_PATTERNS = /^(password|passwd|secret|token|ssn|credit.?card|cvv|auth.?key|api.?secret|private.?key)$/i;
@@ -921,6 +1158,23 @@ function runPendoSetupAssistant() {
       }
     }
   } catch (e) {}
+
+  // CSP issues → recommendations
+  if (result.csp && result.csp.issues && result.csp.issues.length > 0) {
+    var cspErrors = result.csp.issues.filter(function(i) { return i.severity === "error"; });
+    var cspWarnings = result.csp.issues.filter(function(i) { return i.severity === "warning"; });
+    if (cspErrors.length > 0) {
+      recommend("error", "CSP blocking Pendo",
+        "Content Security Policy is likely blocking critical Pendo functionality: " +
+        cspErrors.map(function(i) { return i.directive; }).join(", ") +
+        ". Update your CSP to allow cdn.pendo.io, data.pendo.io, and app.pendo.io.");
+    }
+    if (cspWarnings.length > 0) {
+      recommend("warning", "CSP may affect Pendo features",
+        "Some CSP directives may block Pendo features: " +
+        cspWarnings.map(function(i) { return i.directive + " (" + i.detail.split(".")[0] + ")"; }).join("; ") + ".");
+    }
+  }
 
   // No metadata at all
   if (result.visitorFields.length === 0 && result.accountFields.length === 0) {
