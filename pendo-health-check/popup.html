@@ -45,6 +45,43 @@
       max-width: 320px;
     }
 
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: #fff;
+      border-bottom: 2px solid #e0e0e0;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 10px 12px;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      color: #777;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .tab:hover {
+      color: #333;
+    }
+
+    .tab.active {
+      color: #1b2a4a;
+      border-bottom-color: #1b2a4a;
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
     #loading {
       display: flex;
       flex-direction: column;
@@ -89,10 +126,6 @@
     #not-detected p {
       font-size: 12px;
       line-height: 1.5;
-    }
-
-    #results {
-      display: none;
     }
 
     .checks {
@@ -183,6 +216,140 @@
       margin-top: 8px;
       color: #666;
     }
+
+    /* Setup Assistant styles */
+    .section-header {
+      padding: 10px 16px 4px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1b2a4a;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: #f0f2f5;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: flex-start;
+      padding: 6px 16px;
+      gap: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12px;
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-key {
+      color: #555;
+      min-width: 100px;
+      flex-shrink: 0;
+    }
+
+    .detail-val {
+      color: #1a1a1a;
+      word-break: break-all;
+      font-family: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 11px;
+    }
+
+    .detail-val.mono {
+      background: #f5f5f5;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .recommendation {
+      display: flex;
+      gap: 8px;
+      padding: 8px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .recommendation:last-child {
+      border-bottom: none;
+    }
+
+    .rec-icon {
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+
+    .rec-text {
+      color: #333;
+    }
+
+    .rec-text strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .rec-text .rec-detail {
+      color: #777;
+      font-size: 11px;
+    }
+
+    .metadata-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11px;
+    }
+
+    .metadata-table th {
+      text-align: left;
+      padding: 5px 16px;
+      color: #555;
+      font-weight: 500;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    .metadata-table td {
+      padding: 4px 16px;
+      border-bottom: 1px solid #f5f5f5;
+      font-family: "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    }
+
+    .metadata-table .field-warn {
+      color: #d97706;
+    }
+
+    .metadata-table .field-ok {
+      color: #16a34a;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-yellow { background: #fef9c3; color: #854d0e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-blue { background: #dbeafe; color: #1e40af; }
+
+    .empty-state {
+      padding: 24px 16px;
+      text-align: center;
+      color: #999;
+      font-size: 12px;
+    }
+
+    #setup-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 16px;
+      color: #666;
+    }
   </style>
 </head>
 <body>
@@ -192,6 +359,11 @@
       <h1>Pendo Health Check</h1>
       <div class="url" id="page-url"></div>
     </div>
+  </div>
+
+  <div class="tabs" id="tab-bar" style="display:none">
+    <div class="tab active" data-tab="health">Health Check</div>
+    <div class="tab" data-tab="setup">Setup Assistant</div>
   </div>
 
   <div id="loading">
@@ -211,11 +383,25 @@
     <p id="error-message">Could not access this page. Chrome system pages and the web store are restricted.</p>
   </div>
 
-  <div id="results">
+  <!-- Health Check Tab -->
+  <div id="panel-health" class="tab-panel active">
     <div class="checks" id="checks-list"></div>
-    <div class="summary-bar">
+    <div class="summary-bar" id="health-summary" style="display:none">
       <span class="summary-counts" id="summary-counts"></span>
       <button class="copy-btn" id="copy-btn">Copy Results</button>
+    </div>
+  </div>
+
+  <!-- Setup Assistant Tab -->
+  <div id="panel-setup" class="tab-panel">
+    <div id="setup-loading">
+      <div class="spinner"></div>
+      Analyzing setup…
+    </div>
+    <div id="setup-content" style="display:none"></div>
+    <div class="summary-bar" id="setup-summary" style="display:none">
+      <span class="summary-counts" id="setup-summary-counts"></span>
+      <button class="copy-btn" id="copy-setup-btn">Copy Report</button>
     </div>
   </div>
 
