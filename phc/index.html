@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendo Health Check — Analytics</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #09090b;
+    --surface: #111113;
+    --surface-2: #1c1c1f;
+    --border: #27272a;
+    --text: #fafafa;
+    --text-muted: #a1a1aa;
+    --accent: #ec4899;
+    --accent-dim: #3d1525;
+    --success: #22c55e;
+    --warning: #fbbf24;
+    --danger: #f87171;
+    --info: #60a5fa;
+    --radius: 10px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  header h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  header h1 span { color: var(--accent); }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  select, button {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.15s;
+  }
+
+  select:hover, button:hover { border-color: var(--text-muted); }
+  button:active { transform: scale(0.97); }
+
+  .status {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: right;
+    margin-bottom: 1.5rem;
+  }
+
+  .status .live { color: var(--success); }
+  .status .error { color: var(--danger); }
+
+  /* Cards grid */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+  }
+
+  .card-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+  }
+
+  .card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .card-sub {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* Sections */
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* Bar chart */
+  .bar-chart { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .bar-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    width: 90px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--accent);
+    transition: width 0.4s ease;
+    min-width: 2px;
+  }
+
+  .bar-count {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    width: 50px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-muted);
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    font-variant-numeric: tabular-nums;
+  }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface-2); }
+
+  .badge {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 500;
+  }
+
+  .badge-pass { background: #052e16; color: var(--success); }
+  .badge-warn { background: #422006; color: var(--warning); }
+  .badge-fail { background: #450a0a; color: var(--danger); }
+  .badge-info { background: #172554; color: var(--info); }
+
+  /* Detection donut */
+  .donut-wrap {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .donut {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .donut-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
+
+  .donut-legend { display: flex; flex-direction: column; gap: 0.5rem; }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Sparkline chart */
+  .sparkline-container { width: 100%; height: 120px; position: relative; }
+
+  .sparkline-container svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Empty / loading state */
+  .empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .loading::after {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  footer {
+    text-align: center;
+    padding: 2rem 0 1rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    margin-top: 1rem;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1><span>⚕</span> Pendo Health Check <span>Analytics</span></h1>
+    <div class="controls">
+      <select id="days-select">
+        <option value="7">Last 7 days</option>
+        <option value="30" selected>Last 30 days</option>
+        <option value="90">Last 90 days</option>
+      </select>
+      <button id="refresh-btn">↻ Refresh</button>
+    </div>
+  </header>
+
+  <div class="status" id="status">Connecting…</div>
+
+  <!-- KPI Cards -->
+  <div class="grid" id="kpi-grid">
+    <div class="card">
+      <div class="card-label">Total Events</div>
+      <div class="card-value" id="kpi-total">—</div>
+      <div class="card-sub" id="kpi-active-days"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pendo Detected</div>
+      <div class="card-value" id="kpi-detection">—</div>
+      <div class="card-sub" id="kpi-detection-sub"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Avg Passing</div>
+      <div class="card-value" id="kpi-avg-pass" style="color:var(--success)">—</div>
+      <div class="card-sub" id="kpi-avg-sub"></div>
+    </div>
+    <div class="card">
+      <div class="card-label">Versions Seen</div>
+      <div class="card-value" id="kpi-versions">—</div>
+      <div class="card-sub" id="kpi-versions-sub"></div>
+    </div>
+  </div>
+
+  <!-- Daily activity sparkline -->
+  <div class="section">
+    <h2>📈 Daily Activity</h2>
+    <div class="sparkline-container" id="sparkline">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Event breakdown -->
+  <div class="section">
+    <h2>📊 Event Breakdown</h2>
+    <div class="bar-chart" id="event-bars">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Pendo detection donut + realm table -->
+  <div class="section">
+    <h2>🔍 Pendo Detection</h2>
+    <div class="donut-wrap" id="detection-section">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Version breakdown -->
+  <div class="section">
+    <h2>📦 Version Distribution</h2>
+    <div id="version-table">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <!-- Realm breakdown -->
+  <div class="section">
+    <h2>🌐 Realm Distribution</h2>
+    <div id="realm-table">
+      <div class="empty">Loading…</div>
+    </div>
+  </div>
+
+  <footer>
+    Pendo Health Check Analytics · No PII · No cookies ·
+    <a href="https://github.com/prolitariat/pendo-health-check" target="_blank">GitHub</a>
+  </footer>
+</div>
+
+<script>
+const API = "https://phc-analytics.noskoviak.workers.dev";
+const $ = (s) => document.querySelector(s);
+const statusEl = $("#status");
+const daysSelect = $("#days-select");
+
+function setStatus(msg, ok) {
+  statusEl.innerHTML = ok
+    ? `<span class="live">● Connected</span> — ${msg}`
+    : `<span class="error">● Error</span> — ${msg}`;
+}
+
+async function fetchJSON(path) {
+  const r = await fetch(API + path);
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function pct(n, total) {
+  if (!total) return "0%";
+  return Math.round((n / total) * 100) + "%";
+}
+
+// ─── Sparkline SVG ──────────────────────────────────────────
+function renderSparkline(daily) {
+  const el = $("#sparkline");
+  if (!daily || daily.length === 0) {
+    el.innerHTML = '<div class="empty">No daily data yet</div>';
+    return;
+  }
+
+  // Sort ascending
+  const sorted = [...daily].sort((a, b) => a.day.localeCompare(b.day));
+  const max = Math.max(...sorted.map(d => d.count), 1);
+  const w = 900, h = 110, pad = 30;
+
+  const points = sorted.map((d, i) => {
+    const x = pad + (i / Math.max(sorted.length - 1, 1)) * (w - pad * 2);
+    const y = h - pad - ((d.count / max) * (h - pad * 2));
+    return { x, y, day: d.day, count: d.count };
+  });
+
+  const pathD = points.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x},${p.y}`).join(' ');
+  const areaD = pathD + ` L${points[points.length-1].x},${h - pad} L${points[0].x},${h - pad} Z`;
+
+  el.innerHTML = `
+    <svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ec4899" stop-opacity="0.3"/>
+          <stop offset="100%" stop-color="#ec4899" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="${areaD}" fill="url(#grad)"/>
+      <path d="${pathD}" fill="none" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="3.5" fill="#ec4899" stroke="#111113" stroke-width="1.5"><title>${p.day}: ${p.count} events</title></circle>`).join('')}
+    </svg>
+  `;
+}
+
+// ─── Bar chart ──────────────────────────────────────────────
+function renderBars(byEvent) {
+  const el = $("#event-bars");
+  if (!byEvent || byEvent.length === 0) {
+    el.innerHTML = '<div class="empty">No events yet</div>';
+    return;
+  }
+
+  const max = Math.max(...byEvent.map(e => e.count), 1);
+  const colors = {
+    popup_open: "#ec4899",
+    tab_switch: "#60a5fa",
+    copy_report: "#22c55e",
+    feedback_submit: "#fbbf24",
+  };
+
+  el.innerHTML = byEvent.map(e => `
+    <div class="bar-row">
+      <div class="bar-label">${e.event}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${(e.count / max) * 100}%;background:${colors[e.event] || '#ec4899'}"></div>
+      </div>
+      <div class="bar-count">${e.count.toLocaleString()}</div>
+    </div>
+  `).join('');
+}
+
+// ─── Detection donut ────────────────────────────────────────
+function renderDonut(pendoRate) {
+  const el = $("#detection-section");
+  if (!pendoRate || !pendoRate.total) {
+    el.innerHTML = '<div class="empty">No detection data yet</div>';
+    return;
+  }
+
+  const detected = pendoRate.detected || 0;
+  const notDetected = pendoRate.not_detected || 0;
+  const total = pendoRate.total;
+  const pctVal = Math.round((detected / total) * 100);
+
+  // CSS conic gradient donut
+  el.innerHTML = `
+    <div class="donut" style="background:conic-gradient(var(--success) 0% ${pctVal}%, var(--surface-2) ${pctVal}% 100%)">
+      <div class="donut-center">${pctVal}%</div>
+    </div>
+    <div class="donut-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div> Detected: ${detected}</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--surface-2)"></div> Not detected: ${notDetected}</div>
+      <div class="legend-item" style="color:var(--text-muted);font-size:0.8rem">From ${total} popup opens</div>
+    </div>
+  `;
+}
+
+// ─── Tables ─────────────────────────────────────────────────
+function renderVersionTable(byVersion) {
+  const el = $("#version-table");
+  if (!byVersion || byVersion.length === 0) {
+    el.innerHTML = '<div class="empty">No version data yet</div>';
+    return;
+  }
+
+  const total = byVersion.reduce((s, v) => s + v.count, 0);
+  el.innerHTML = `
+    <table>
+      <tr><th>Version</th><th>Events</th><th>Share</th></tr>
+      ${byVersion.map(v => `
+        <tr>
+          <td><code>${v.version || '(unknown)'}</code></td>
+          <td>${v.count.toLocaleString()}</td>
+          <td>${pct(v.count, total)}</td>
+        </tr>
+      `).join('')}
+    </table>
+  `;
+}
+
+function renderRealmTable(byRealm) {
+  const el = $("#realm-table");
+  if (!byRealm || byRealm.length === 0) {
+    el.innerHTML = '<div class="empty">No realm data yet</div>';
+    return;
+  }
+
+  const total = byRealm.reduce((s, r) => s + r.count, 0);
+  el.innerHTML = `
+    <table>
+      <tr><th>Realm</th><th>Events</th><th>Share</th></tr>
+      ${byRealm.map(r => `
+        <tr>
+          <td>${r.realm}</td>
+          <td>${r.count.toLocaleString()}</td>
+          <td>${pct(r.count, total)}</td>
+        </tr>
+      `).join('')}
+    </table>
+  `;
+}
+
+// ─── Main fetch ─────────────────────────────────────────────
+async function load() {
+  const days = daysSelect.value;
+  statusEl.innerHTML = '<span class="loading">Loading</span>';
+
+  try {
+    const [stats, pendo] = await Promise.all([
+      fetchJSON(`/stats?days=${days}`),
+      fetchJSON(`/stats/pendo?days=${days}`),
+    ]);
+
+    setStatus(`Last ${days} days · Updated ${new Date().toLocaleTimeString()}`, true);
+
+    // KPIs
+    $("#kpi-total").textContent = (stats.totals?.total || 0).toLocaleString();
+    $("#kpi-active-days").textContent = `${stats.totals?.active_days || 0} active days`;
+
+    const rate = pendo.pendoRate;
+    if (rate && rate.total) {
+      $("#kpi-detection").textContent = Math.round((rate.detected / rate.total) * 100) + "%";
+      $("#kpi-detection-sub").textContent = `${rate.detected} of ${rate.total} opens`;
+    }
+
+    const avg = pendo.avgChecks;
+    if (avg) {
+      $("#kpi-avg-pass").textContent = avg.avg_pass ?? "—";
+      $("#kpi-avg-sub").textContent = `${avg.avg_warn ?? 0} warn · ${avg.avg_fail ?? 0} fail`;
+    }
+
+    if (stats.byVersion) {
+      $("#kpi-versions").textContent = stats.byVersion.length;
+      const top = stats.byVersion[0];
+      if (top) $("#kpi-versions-sub").textContent = `Most common: v${top.version}`;
+    }
+
+    // Charts
+    renderSparkline(stats.daily);
+    renderBars(stats.byEvent);
+    renderDonut(pendo.pendoRate);
+    renderVersionTable(stats.byVersion);
+    renderRealmTable(pendo.byRealm);
+
+  } catch (err) {
+    setStatus(err.message, false);
+  }
+}
+
+daysSelect.addEventListener("change", load);
+$("#refresh-btn").addEventListener("click", load);
+
+// Initial load
+load();
+</script>
+</body>
+</html>
