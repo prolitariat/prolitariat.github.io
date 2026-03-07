@@ -183,9 +183,9 @@
 
             <h2>The Problem</h2>
 
-            <p>If you've ever managed a Pendo implementation, you know the drill. A customer reports that guides aren't showing. A developer asks why visitor data looks wrong. A CSP policy silently blocks the agent and nobody notices for weeks. Every time, you're digging through browser consoles, checking network tabs, and running <code>pendo.validateInstall()</code> by hand.</p>
+            <p>If you've ever managed a Pendo implementation, you know the drill. Guides stop showing and nobody knows why. Visitor data looks wrong but the snippet seems fine. A CSP policy silently blocks the agent and nobody notices for weeks. Every time, you're digging through browser consoles, checking network tabs, and running <code>pendo.validateInstall()</code> by hand.</p>
 
-            <p>I've been on both sides of this — as a Customer Success Manager helping enterprise clients debug Pendo at Jamf, and now as a Product Manager at Splunk working on product analytics and in-app content. The workflow was always the same: open DevTools, poke at <code>window.pendo</code>, check half a dozen things, try to remember what the healthy state looks like.</p>
+            <p>I've spent years as a practitioner inside Pendo — first as Sr. Program Manager for Digital Adoption at Jamf, now as a Product Manager at Splunk working on product analytics and in-app content. The job is the same at both: connect data systems, acquire and analyze data, then create in-app content that moves needles. And the debugging workflow was always the same too: open DevTools, poke at <code>window.pendo</code>, check half a dozen things, try to remember what the healthy state looks like.</p>
 
             <p>The Pendo Health Check started as a question: what if all of that was one click?</p>
 
@@ -199,7 +199,7 @@
 
             <h2>From 5 Checks to 11</h2>
 
-            <p>The real value emerged through iteration. Each new check came from a real debugging scenario I'd seen in the field:</p>
+            <p>The real value emerged through iteration. Each new check came from a real scenario I'd hit while managing Pendo implementations:</p>
 
             <p><strong>Dual Instance Detection</strong> (Check #6) — one of the most subtle and destructive Pendo bugs. When two copies of the agent load on the same page (common with tag managers and SPAs), they fight over state. The check counts <code>&lt;script&gt;</code> tags and inspects the pendo namespace for conflicts.</p>
 
