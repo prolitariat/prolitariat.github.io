@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Building the Pendo Health Check Chrome Extension | Brandon Noskoviak</title>
-    <meta name="description" content="How I built a Chrome extension that runs 11 real-time diagnostics against the Pendo analytics agent — from first commit to Chrome Web Store, entirely through AI-assisted pair programming.">
+    <meta name="description" content="How I built a Chrome extension that runs 13 real-time diagnostics against the Pendo analytics agent — from first commit to Chrome Web Store, entirely through AI-assisted pair programming.">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -168,7 +168,7 @@
                     <div class="stat-label">Commits</div>
                 </div>
                 <div class="stat-box">
-                    <div class="stat-number">11</div>
+                    <div class="stat-number">13</div>
                     <div class="stat-label">Health Checks</div>
                 </div>
                 <div class="stat-box">
@@ -197,7 +197,7 @@
 
             <p>The first commit gave me a working popup with five basic checks. It could detect whether Pendo was loaded, whether it was initialized, and whether visitor and account IDs were present. Useful, but barely scratching the surface of what goes wrong in real implementations.</p>
 
-            <h2>From 5 Checks to 11</h2>
+            <h2>From 5 Checks to 13</h2>
 
             <p>The real value emerged through iteration. Each new check came from a real scenario I'd hit while managing Pendo implementations:</p>
 
@@ -206,6 +206,10 @@
             <p><strong>Network Request Validation</strong> (Check #10) — goes beyond "is the agent loaded" to "is it actually talking to the server." Uses <code>performance.getEntriesByType('resource')</code> to find Pendo traffic, then checks for the CORS fingerprint (<code>transferSize === 0</code> and <code>responseStatus === 0</code>) that indicates a blocked request.</p>
 
             <p><strong>Feature Flag Detection</strong> (Check #11) — inspects <code>pendo.getOptions()</code> for non-default configuration, which often explains unexpected behavior that basic checks miss.</p>
+
+            <p><strong>Ad Blocker Detection</strong> (Check #12) — ad blockers don't just block ads. Many filter lists target analytics scripts, including Pendo's CDN and data endpoints. This check detects whether an ad blocker is interfering with agent loading or data transmission.</p>
+
+            <p><strong>Consent Platform Detection</strong> (Check #13) — CMP and GDPR consent platforms can delay or prevent Pendo initialization entirely. The check scans for major consent management platforms and flags when consent state may be blocking the agent.</p>
 
             <h2>The Setup Assistant</h2>
 
@@ -237,7 +241,7 @@
 
             <p>The test harness (<code>test-harness.html</code>) is a self-contained HTML page with 8 preset scenarios and granular toggle controls for every mock dimension: agent state, identity/metadata, guides, network/hosting, CSP modes, CMP/GDPR platforms, and framework detection. You select a preset, click the extension icon, and verify the output.</p>
 
-            <p>It mocks <code>window.pendo</code>, <code>performance.getEntriesByType</code>, CMP globals, framework globals, and CSP meta tags — everything the extension inspects. This made it possible to regression test all 11 checks across 8 scenarios without needing access to live Pendo implementations in various states of disrepair.</p>
+            <p>It mocks <code>window.pendo</code>, <code>performance.getEntriesByType</code>, CMP globals, framework globals, and CSP meta tags — everything the extension inspects. This made it possible to regression test all 13 checks across 8 scenarios without needing access to live Pendo implementations in various states of disrepair.</p>
 
             <h2>Accessibility and Craft</h2>
 
