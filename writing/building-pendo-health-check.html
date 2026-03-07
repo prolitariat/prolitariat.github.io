@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Building the Pendo Health Check Chrome Extension | Brandon Noskoviak</title>
+    <meta name="description" content="How I built a Chrome extension that runs 11 real-time diagnostics against the Pendo analytics agent — from first commit to Chrome Web Store, entirely through AI-assisted pair programming.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        charter: ['Charter', 'Georgia', 'Cambria', 'Times New Roman', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter'), local('Charter-Roman'), local('ITC Charter');
+            font-weight: 400;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'Charter';
+            src: local('Charter Bold'), local('Charter-Bold'), local('ITC Charter Bold');
+            font-weight: 700;
+            font-style: normal;
+        }
+
+        body {
+            background: linear-gradient(160deg, #e8eeff 0%, #dbeafe 20%, #f0e7ff 45%, #e0f2fe 70%, #ede9fe 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(199, 210, 254, 0.4), transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(191, 219, 254, 0.3), transparent 50%),
+                radial-gradient(ellipse at 60% 80%, rgba(221, 214, 254, 0.3), transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .nav-glass {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        article h2 {
+            font-family: 'Charter', Georgia, serif;
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #1a1a2e;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        article p {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2d2d3a;
+            margin-bottom: 1.25rem;
+        }
+
+        article ul {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2d2d3a;
+            margin-bottom: 1.25rem;
+            padding-left: 1.5rem;
+        }
+
+        article li {
+            margin-bottom: 0.5rem;
+        }
+
+        article code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: rgba(99, 102, 241, 0.08);
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            color: #4338ca;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 0.75rem;
+            padding: 1rem 1.25rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4338ca;
+        }
+
+        .stat-label {
+            font-family: 'Charter', Georgia, serif;
+            font-size: 0.85rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+    </style>
+    <link rel="alternate" type="application/rss+xml" title="Brandon Noskoviak" href="/feed.xml">
+    <script>
+        (function(){var t=localStorage.getItem('theme')||(window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.setAttribute('data-theme',t)})();
+    </script>
+    <script src="/shared/theme.js" defer></script>
+</head>
+<body class="antialiased">
+
+    <!-- Navigation -->
+    <nav class="nav-glass fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="text-lg font-semibold text-gray-800 hover:text-indigo-600 transition-colors" style="font-family: Charter, Georgia, serif;">Brandon Noskoviak</a>
+            <div class="flex gap-6 text-sm text-gray-600">
+                <a href="/" class="hover:text-indigo-600 transition-colors">Portfolio</a>
+                <a href="/projects/" class="hover:text-indigo-600 transition-colors">Projects</a>
+                <a href="/writing/" class="hover:text-indigo-600 transition-colors">Blog</a>
+                <a href="/#contact" class="hover:text-indigo-600 transition-colors">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Article -->
+    <main class="max-w-3xl mx-auto px-6 pt-28 pb-20">
+
+        <a href="/writing/" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors">&larr; Back to Blog</a>
+
+        <article class="mt-6">
+            <h1 style="font-family: Charter, Georgia, serif; font-size: 2.4rem; font-weight: 700; line-height: 1.2; color: #1a1a2e;">Building the Pendo Health Check Chrome Extension</h1>
+            <p class="mt-4 text-lg italic" style="color: #6b7280; font-family: Charter, Georgia, serif;">How I built a three-tab diagnostic suite for the Pendo analytics agent — 61 commits, zero dependencies, entirely through AI-assisted pair programming.</p>
+            <p class="mt-3 text-sm" style="color: #9ca3af;">March 7, 2026 &middot; 10 min read</p>
+
+            <hr class="my-8 border-gray-200/60">
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 my-8">
+                <div class="stat-box">
+                    <div class="stat-number">61</div>
+                    <div class="stat-label">Commits</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">11</div>
+                    <div class="stat-label">Health Checks</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Dependencies</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">v1.5</div>
+                    <div class="stat-label">Current Version</div>
+                </div>
+            </div>
+
+            <h2>The Problem</h2>
+
+            <p>If you've ever managed a Pendo implementation, you know the drill. A customer reports that guides aren't showing. A developer asks why visitor data looks wrong. A CSP policy silently blocks the agent and nobody notices for weeks. Every time, you're digging through browser consoles, checking network tabs, and running <code>pendo.validateInstall()</code> by hand.</p>
+
+            <p>I've been on both sides of this — as a Customer Success Manager helping enterprise clients debug Pendo at Jamf, and now as a Product Manager at Splunk working on product analytics and in-app content. The workflow was always the same: open DevTools, poke at <code>window.pendo</code>, check half a dozen things, try to remember what the healthy state looks like.</p>
+
+            <p>The Pendo Health Check started as a question: what if all of that was one click?</p>
+
+            <h2>Starting From Zero</h2>
+
+            <p>I built this the same way I built my portfolio site — through conversation with Claude in Cowork mode. No IDE. No terminal. Just describing what I wanted and iterating on the results. The entire extension is vanilla JavaScript with zero external dependencies — no npm, no build step, no bundler. You clone the repo, load it unpacked in Chrome, and it works.</p>
+
+            <p>The architecture decision to stay dependency-free wasn't accidental. Chrome extensions with complex build systems create friction for contributors and make debugging harder. When the entire extension is three files you can read top-to-bottom (<code>popup.html</code>, <code>popup.js</code>, <code>background.js</code>), the barrier to understanding it drops to zero.</p>
+
+            <p>The first commit gave me a working popup with five basic checks. It could detect whether Pendo was loaded, whether it was initialized, and whether visitor and account IDs were present. Useful, but barely scratching the surface of what goes wrong in real implementations.</p>
+
+            <h2>From 5 Checks to 11</h2>
+
+            <p>The real value emerged through iteration. Each new check came from a real debugging scenario I'd seen in the field:</p>
+
+            <p><strong>Dual Instance Detection</strong> (Check #6) — one of the most subtle and destructive Pendo bugs. When two copies of the agent load on the same page (common with tag managers and SPAs), they fight over state. The check counts <code>&lt;script&gt;</code> tags and inspects the pendo namespace for conflicts.</p>
+
+            <p><strong>Network Request Validation</strong> (Check #10) — goes beyond "is the agent loaded" to "is it actually talking to the server." Uses <code>performance.getEntriesByType('resource')</code> to find Pendo traffic, then checks for the CORS fingerprint (<code>transferSize === 0</code> and <code>responseStatus === 0</code>) that indicates a blocked request.</p>
+
+            <p><strong>Feature Flag Detection</strong> (Check #11) — inspects <code>pendo.getOptions()</code> for non-default configuration, which often explains unexpected behavior that basic checks miss.</p>
+
+            <h2>The Setup Assistant</h2>
+
+            <p>Health checks tell you what's wrong right now. But Pendo problems often stem from how the agent was installed in the first place — the wrong snippet, missing <code>async</code> attributes, CSP policies that block the CDN.</p>
+
+            <p>The Setup Assistant is a full implementation audit that runs seven analysis sections: framework detection (React, Angular, Vue, Svelte, Next.js), snippet analysis, initialization method and timing, Content Security Policy compatibility with per-directive fix instructions, CNAME host detection, CMP/GDPR consent platform detection across six major platforms, and metadata field validation with PII scanning.</p>
+
+            <p>The CSP analysis alone was a significant engineering challenge. The extension inspects both HTTP headers (via <code>performance.getEntriesByType</code>) and <code>&lt;meta&gt;</code> tags, then checks each relevant directive (<code>script-src</code>, <code>connect-src</code>, <code>img-src</code>, <code>style-src</code>, <code>child-src</code>) to determine whether Pendo's domains are permitted. When they're not, it generates ready-to-paste fix instructions with auto-detected subscription IDs.</p>
+
+            <h2>The Commit History Tells the Story</h2>
+
+            <p>The 61 commits read like a product development journal:</p>
+
+            <div class="glass-card rounded-xl p-5 my-6" style="font-family: 'SF Mono', 'Fira Code', monospace; font-size: 0.82rem; line-height: 1.9; color: #4338ca;">
+                v1.0: Basic health check popup<br>
+                v1.1: Setup Assistant with CSP analysis<br>
+                v1.2: Live service status, network validation, feature flags<br>
+                v1.3: WCAG 2.1 AA accessibility pass<br>
+                v1.3.4: Complete clipboard remediation rewrite<br>
+                v1.4: CNAME detection, CMP/GDPR consent, CORS detection<br>
+                v1.5: QA test harness, first-run tour, copy button pulse
+            </div>
+
+            <p>Each version wasn't just new features — it was refinement based on real usage. The clipboard system was completely rewritten in v1.3.4 because the original output wasn't actionable enough. Every check now includes context-aware remediation text, and CSP violations include per-directive fix instructions. Reports are structured as plain text suitable for pasting into Slack, Jira, or email.</p>
+
+            <h2>The QA Test Harness</h2>
+
+            <p>Testing a Chrome extension that diagnoses another tool's state is inherently tricky. You need a page with Pendo in various states — healthy, broken, CSP-blocked, waiting for consent, behind a CNAME, ad-blocked, partially initialized, running inside a React SPA.</p>
+
+            <p>The test harness (<code>test-harness.html</code>) is a self-contained HTML page with 8 preset scenarios and granular toggle controls for every mock dimension: agent state, identity/metadata, guides, network/hosting, CSP modes, CMP/GDPR platforms, and framework detection. You select a preset, click the extension icon, and verify the output.</p>
+
+            <p>It mocks <code>window.pendo</code>, <code>performance.getEntriesByType</code>, CMP globals, framework globals, and CSP meta tags — everything the extension inspects. This made it possible to regression test all 11 checks across 8 scenarios without needing access to live Pendo implementations in various states of disrepair.</p>
+
+            <h2>Accessibility and Craft</h2>
+
+            <p>Chrome extension popups are notoriously inaccessible. They're small, they use custom styling, and most developers treat them as disposable UI. I wanted to do better.</p>
+
+            <p>The extension passes WCAG 2.1 AA with 51 color combinations tested. Every interactive element has focus-visible rings, the tab bar uses proper <code>role="tablist"</code> / <code>role="tab"</code> / <code>role="tabpanel"</code> ARIA attributes, and the first-run tour supports full keyboard navigation — arrow keys to advance/retreat, Escape to skip, Enter to advance.</p>
+
+            <p>The first-run tour itself uses a spotlight overlay (box-shadow cutout) with positioned tooltips that walk through each tab and the copy button. It runs once on first install and persists via <code>chrome.storage.local</code>.</p>
+
+            <h2>The Analytics Dashboard</h2>
+
+            <p>The extension collects anonymous usage telemetry — popup opens, tab switches, copy report actions, feedback submissions — and ships it to a Cloudflare Workers backend. No PII, no cookies, no personally identifiable data.</p>
+
+            <p>The companion analytics dashboard at <a href="/phc/" class="text-indigo-500 hover:text-indigo-700 transition-colors">noskoviak.net/phc</a> visualizes this data in real time: total events, Pendo detection rates, average health scores, version distribution, and daily activity trends. It auto-detects the time range and updates KPIs dynamically.</p>
+
+            <p>Building a privacy-first analytics system for a diagnostic tool that itself analyzes analytics tools has a certain recursive elegance to it.</p>
+
+            <h2>What I Learned</h2>
+
+            <p>Building a Chrome extension through AI-assisted pair programming taught me a few things that surprised me:</p>
+
+            <p><strong>Zero dependencies is a feature.</strong> The extension loads instantly, the source code is readable by anyone, and contributions don't require installing a toolchain. When a contributor can understand the entire codebase by reading three files, pull requests get reviewed faster and bugs get found quicker.</p>
+
+            <p><strong>Accessibility in small UIs matters more, not less.</strong> Extension popups are where people go when they're already frustrated — something isn't working and they need answers. Making that experience keyboard-navigable and screen-reader-friendly is a basic respect issue.</p>
+
+            <p><strong>AI pair programming favors fast iteration over planning.</strong> I didn't write a spec for this extension. I described what I wanted, looked at the result, and described what needed to change. Sixty-one commits in a few days, each one a small improvement. The cost of trying something wrong is minutes, not hours. That changes how you build.</p>
+
+            <p><strong>The best tool is the one that gives you answers in one click.</strong> Every check in the extension existed as a manual DevTools procedure before. The value isn't in the diagnostics themselves — it's in removing the friction between "I wonder if Pendo is working" and having a clear answer.</p>
+
+            <hr class="my-8 border-gray-200/60">
+
+            <p>The extension is open source under MIT license. You can install it from the Chrome Web Store, or clone the repo and load it unpacked. Contributions are welcome — the codebase is designed to be extended by anyone comfortable with vanilla JavaScript.</p>
+
+            <p class="mt-6">
+                <a href="https://github.com/prolitariat/pendo-health-check" class="text-indigo-500 hover:text-indigo-700 transition-colors font-medium" target="_blank" rel="noopener">View the source on GitHub &rarr;</a>
+            </p>
+            <p>
+                <a href="/projects/" class="text-indigo-500 hover:text-indigo-700 transition-colors font-medium">View all projects &rarr;</a>
+            </p>
+
+        </article>
+
+        <div class="mt-12 pt-8 border-t border-gray-200/60">
+            <a href="/writing/" class="text-indigo-500 hover:text-indigo-700 text-sm font-medium transition-colors">&larr; Back to Blog</a>
+        </div>
+
+    </main>
+
+</body>
+</html>
