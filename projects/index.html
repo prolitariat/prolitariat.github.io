@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects | Brandon Noskoviak</title>
-    <meta name="description" content="Open-source tools and projects by Brandon Noskoviak — Chrome extensions, analytics dashboards, and developer utilities.">
+    <meta name="description" content="Projects by Brandon Noskoviak.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -60,51 +60,6 @@
             background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.08), transparent);
             margin: 28px 0;
         }
-        .check-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 0.75rem; }
-        .check-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-        }
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            padding: 0.2rem 0.6rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-        .badge-green { background: rgba(34, 197, 94, 0.12); color: #15803d; }
-        .badge-blue { background: rgba(59, 130, 246, 0.12); color: #1d4ed8; }
-        .badge-purple { background: rgba(139, 92, 246, 0.12); color: #6d28d9; }
-        .badge-amber { background: rgba(245, 158, 11, 0.12); color: #b45309; }
-        .stat-box {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(255,255,255,0.3);
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.4);
-        }
-        .stat-number { font-size: 1.5rem; font-weight: 700; color: #1a1a2e; }
-        .stat-label { font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem; }
-        .tab-bar { display: flex; gap: 0; border-radius: 0.5rem; overflow: hidden; border: 1px solid rgba(255,255,255,0.4); }
-        .tab-item {
-            flex: 1;
-            text-align: center;
-            padding: 0.5rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            background: rgba(255,255,255,0.25);
-            color: #6b7280;
-            border-right: 1px solid rgba(255,255,255,0.3);
-        }
-        .tab-item:last-child { border-right: none; }
-        .tab-item.active { background: rgba(255,255,255,0.55); color: #1a1a2e; }
     </style>
     <link rel="alternate" type="application/rss+xml" title="Brandon Noskoviak" href="/feed.xml">
     <script>
@@ -134,139 +89,16 @@
         <!-- Header -->
         <header class="mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Projects</h1>
-            <p class="text-gray-500 text-base">Open-source tools built at the intersection of product analytics and developer experience.</p>
+            <p class="text-gray-500 text-base">Check out what I've been working on.</p>
         </header>
 
-        <div class="section-divider"></div>
-
-        <!-- Pendo Health Check -->
-        <section class="glass-card rounded-xl p-6 md:p-8 mb-8">
-
-            <!-- Project Header -->
-            <div class="flex items-start gap-4 mb-6">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center flex-shrink-0 shadow-lg">
-                    <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <div class="flex items-center gap-3 mb-1">
-                        <h2 class="text-xl font-bold text-gray-900">Pendo Health Check</h2>
-                        <span class="badge badge-green">v1.5.0</span>
-                        <span class="badge badge-blue">Chrome Extension</span>
-                    </div>
-                    <p class="text-sm text-gray-500">A Manifest V3 Chrome extension that runs real-time diagnostics against the Pendo analytics agent on any web page.</p>
-                </div>
-            </div>
-
-            <!-- Status Bar -->
-            <div class="flex flex-wrap gap-2 mb-6">
-                <span class="badge badge-purple">Vanilla JS</span>
-                <span class="badge badge-green">MIT License</span>
-                <span class="badge badge-amber">Active Development</span>
-                <span class="badge badge-blue">61 Commits</span>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div class="stat-box">
-                    <div class="stat-number">13</div>
-                    <div class="stat-label">Health Checks</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">3</div>
-                    <div class="stat-label">Diagnostic Tabs</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">0</div>
-                    <div class="stat-label">Dependencies</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-number">8</div>
-                    <div class="stat-label">QA Presets</div>
-                </div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Extension Tabs Preview -->
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Extension Tabs</h3>
-            <div class="tab-bar mb-4">
-                <div class="tab-item active">Health Check</div>
-                <div class="tab-item">Setup Assistant</div>
-                <div class="tab-item">Tools</div>
-            </div>
-
-            <div class="space-y-4 mb-6">
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-2">Tab 1: Health Check &mdash; <span class="text-gray-500 font-normal">"Is Pendo working right now?"</span></h4>
-                    <div class="check-grid">
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Agent Loaded</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Pendo Ready</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Visitor ID</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Account ID</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Active Guides</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Pendo Instances</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Agent Version</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">API Key</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Data Host</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Network Requests</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Feature Flags</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Ad Blocker</span></div>
-                        <div class="check-item"><span class="text-green-600 font-bold text-sm mt-px">&#10003;</span><span class="text-sm text-gray-700">Consent (CMP)</span></div>
-                    </div>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-2">Tab 2: Setup Assistant &mdash; <span class="text-gray-500 font-normal">"Is Pendo installed correctly?"</span></h4>
-                    <p class="text-sm text-gray-600 leading-relaxed">Framework detection (React, Angular, Vue, Svelte, Next.js), snippet analysis, initialization audit, CSP compatibility with per-directive fixes, CNAME host detection, CMP/GDPR consent platform detection, and metadata validation with PII scanning.</p>
-                </div>
-
-                <div>
-                    <h4 class="font-semibold text-gray-900 mb-2">Tab 3: Tools &mdash; <span class="text-gray-500 font-normal">"Run diagnostics and copy issues"</span></h4>
-                    <p class="text-sm text-gray-600 leading-relaxed">Launch Pendo Debugger (on-page overlay for alerts, config, events, and guides), one-click Validate Install and Validate Environment console commands, plus Copy Issues to Clipboard &mdash; a priority-sorted plain-English report with remediation suggestions, ready to paste into Slack or Jira.</p>
-                </div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Key Features -->
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Key Features</h3>
-            <div class="space-y-2 mb-6">
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>Live Service Status</strong> &mdash; Auto-detects realm (US/EU/US1/JP), shows real-time Pendo service health</span></div>
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>QA Test Harness</strong> &mdash; 8 preset scenarios for regression testing without a live Pendo installation</span></div>
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>First-Run Tour</strong> &mdash; 5-step guided onboarding with spotlight overlays and keyboard navigation</span></div>
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>WCAG 2.1 AA</strong> &mdash; Full keyboard accessibility, ARIA roles, focus-visible rings, 51 color combos passing</span></div>
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>PII-Scrubbed Feedback</strong> &mdash; Emails, phone numbers, SSNs, credit cards, and IPs stripped before submission</span></div>
-                <div class="check-item"><span class="text-indigo-600 font-bold text-sm mt-px">&#9830;</span><span class="text-sm text-gray-700"><strong>Zero Dependencies</strong> &mdash; Pure vanilla JS, no build step, no npm, no bundler</span></div>
-            </div>
-
-            <div class="section-divider"></div>
-
-            <!-- Analytics Dashboard -->
-            <h3 class="text-sm font-semibold text-gray-700 uppercase tracking-wide mb-3">Analytics Dashboard</h3>
-            <p class="text-sm text-gray-600 mb-4 leading-relaxed">
-                A companion analytics dashboard tracks extension usage in real time &mdash; total events, Pendo detection rates, average health scores, version distribution, and event breakdowns &mdash; all powered by a Cloudflare Workers backend. No PII, no cookies.
-            </p>
-            <a href="/phc/" class="inline-flex items-center gap-2 text-sm text-indigo-500 hover:text-indigo-700 font-medium transition-colors mb-4">
-                View live analytics dashboard &rarr;
+        <div class="text-center py-12">
+            <a href="https://github.com/prolitariat" target="_blank" rel="noopener"
+               class="inline-flex items-center gap-3 px-6 py-3 text-base font-medium text-gray-700 glass-card hover:bg-white/60 rounded-lg transition-all">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                View my projects on GitHub
             </a>
-
-            <div class="section-divider"></div>
-
-            <!-- Links -->
-            <div class="flex flex-wrap gap-3">
-                <a href="https://github.com/prolitariat/pendo-health-check" target="_blank" rel="noopener"
-                   class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white/50 hover:bg-white/70 border border-white/60 rounded-lg transition-all">
-                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
-                    Source Code
-                </a>
-                <a href="/writing/building-pendo-health-check.html"
-                   class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-500 hover:bg-indigo-600 rounded-lg transition-all">
-                    Read the build story &rarr;
-                </a>
-            </div>
-        </section>
+        </div>
 
         <!-- Footer -->
         <footer class="text-center pt-4">
