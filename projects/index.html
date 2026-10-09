@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects | Brandon Noskoviak</title>
-    <meta name="description" content="Projects by Brandon Noskoviak.">
+    <meta name="description" content="Pendo Health Check: an independent Chrome extension created by Brandon Noskoviak to diagnose Pendo installations and share troubleshooting context.">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -89,8 +89,59 @@
         <!-- Header -->
         <header class="mb-8">
             <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Projects</h1>
-            <p class="text-gray-500 text-base">Check out what I've been working on.</p>
+            <p class="text-gray-500 text-base">Tools I've built to make complex systems easier to understand.</p>
         </header>
+
+        <article class="glass-card rounded-lg p-6 md:p-8 mb-8" aria-labelledby="pendo-health-check-title">
+            <p class="text-sm font-medium text-indigo-700 mb-2">Independent Chrome extension</p>
+            <h2 id="pendo-health-check-title" class="text-2xl font-bold text-gray-900 mb-4">Pendo Health Check</h2>
+            <p class="text-base leading-relaxed mb-6">
+                I created and published a browser tool that helps Pendo administrators
+                understand installation health and share useful troubleshooting context.
+            </p>
+
+            <div class="flex flex-wrap gap-3 mb-8">
+                <a href="https://chromewebstore.google.com/detail/pendo-health-check/clcjdjkhbhigpbcfliedfdielpjfjcmo"
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center px-4 py-2.5 text-base font-medium text-indigo-700 glass-card hover:bg-white/60 rounded-lg transition-all">View extension</a>
+                <a href="https://github.com/prolitariat/pendo-health-check"
+                   target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center px-4 py-2.5 text-base font-medium text-gray-700 glass-card hover:bg-white/60 rounded-lg transition-all">View source</a>
+            </div>
+
+            <div class="space-y-6 text-base leading-relaxed">
+                <section aria-labelledby="phc-problem">
+                    <h3 id="phc-problem" class="font-semibold text-gray-900 mb-2">The problem</h3>
+                    <p>Installation details can be difficult to interpret and communicate.
+                       Administrators need a clear view of what is working, what needs attention
+                       and which details to share with engineering or support.</p>
+                </section>
+                <section aria-labelledby="phc-contribution">
+                    <h3 id="phc-contribution" class="font-semibold text-gray-900 mb-2">My contribution</h3>
+                    <p>I brought diagnostic information into a compact dashboard, combining
+                       product design, JavaScript and Chrome extension development to make
+                       installation checks easier to read and act on.</p>
+                </section>
+                <section aria-labelledby="phc-approach">
+                    <h3 id="phc-approach" class="font-semibold text-gray-900 mb-2">The approach</h3>
+                    <p>The extension presents an A–F installation grade, status information,
+                       identifiers for support tickets and practical developer tools.
+                       The public source documents runtime and setup checks, prioritized
+                       findings and diagnostic report exports.</p>
+                </section>
+                <section aria-labelledby="phc-result">
+                    <h3 id="phc-result" class="font-semibold text-gray-900 mb-2">The result</h3>
+                    <p>Pendo Health Check is published in the Chrome Web Store, with public
+                       source available on GitHub. It gives administrators a focused way to
+                       inspect a Pendo installation and gather troubleshooting context.</p>
+                </section>
+            </div>
+
+            <p class="text-sm text-gray-600 leading-relaxed mt-8 pt-5 border-t border-white/40">
+                This is an independent side project, not an official Pendo product.
+                It is not affiliated with or endorsed by Pendo.
+            </p>
+        </article>
 
         <div class="text-center py-12">
             <a href="https://github.com/prolitariat" target="_blank" rel="noopener"
