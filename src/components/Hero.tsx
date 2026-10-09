@@ -19,7 +19,7 @@ export const Hero: Component = () => {
             <p class="animate-in animate-in-delay-2 text-xl md:text-2xl text-secondary max-w-2xl">
               Staff Engineering Product Manager
               <span class="block mt-1 text-lg md:text-xl">
-                Product Analytics & In-App Content at Splunk (Cisco)
+                Product Analytics & In-App Content · Digital Adoption
               </span>
             </p>
           </div>
