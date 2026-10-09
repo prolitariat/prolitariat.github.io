@@ -15,13 +15,13 @@ export default function App() {
           <Meta name="viewport" content="width=device-width, initial-scale=1" />
           <Meta
             name="description"
-            content="Staff Engineering Product Manager specializing in Product Analytics & In-App Content at Splunk (Cisco). Building clarity inside complex products."
+            content="Staff Engineering Product Manager specializing in product analytics, digital adoption and in-app experiences. Building clarity inside complex products."
           />
           <Meta name="theme-color" content="#0a0a0a" />
           <Meta property="og:title" content="Brandon Noskoviak | Staff Engineering Product Manager" />
           <Meta
             property="og:description"
-            content="Building clarity inside complex products. Product Analytics & In-App Content at Splunk (Cisco)."
+            content="Building clarity inside complex products through product analytics, digital adoption and in-app experiences."
           />
           <Meta property="og:type" content="website" />
           <Meta name="twitter:card" content="summary" />
