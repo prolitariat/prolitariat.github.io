@@ -12,12 +12,11 @@ interface ExperienceItem {
 
 const experiences: ExperienceItem[] = [
   {
-    company: "Splunk (Cisco)",
-    role: "Staff Engineering Product Manager",
-    period: "Feb 2025 — Present",
+    company: "Cisco · Splunk applications",
+    role: "Staff Engineering Product Manager, Product Analytics & In-App Content",
+    period: "February 2025 — October 2026",
     description:
-      "Leading Product Analytics & In-App Content. Building systems that transform complex observability data into actionable insights, enabling teams to self-serve analytics at scale.",
-    current: true,
+      "Led a hybrid Center of Excellence for Product Analytics & In-App Content across 20+ Splunk applications at Cisco. Built shared analytics standards and engagement programs to help teams across the company achieve business goals.",
   },
   {
     company: "Jamf",
