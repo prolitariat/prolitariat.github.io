@@ -17,9 +17,9 @@ export const About: Component = () => {
             jump in myself to analyze, teach, and guide when the situation calls for it.
           </p>
           <p class="leading-relaxed">
-            At Splunk, I focus on bridging the gap between complex observability data
-            and the humans who need to make sense of it. Every feature I ship is designed
-            to reduce cognitive load and increase confidence in decision-making.
+            At Cisco, I focused on Product Analytics & In-App Content for Splunk
+            applications, helping teams across the company turn insights into
+            practical steps toward their business goals.
           </p>
         </div>
       </div>
